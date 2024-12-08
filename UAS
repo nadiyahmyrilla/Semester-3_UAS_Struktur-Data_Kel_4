@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include <conio.h>
+#include <stdlib.h>
+#include <string.h>
+
+//===================DOUBLE LINKED LIST=============================
+struct node {
+    int id;                
+    char judul[100];
+    char artis[100];
+    int durasi;             // Durasi Lagu (dalam detik)
+    int tahunRilis;
+    struct node *left;
+    struct node *right;
+};
+typedef struct node node;
+
+void tambahAwal(node **head);
+void tambahData(node **head);
+void tambahAkhir(node **head);
+void hapusAwal(node **head);
+void hapusData(node **head);
+void hapusAkhir(node **head);
+void totalData(node **head);
+void totalValue(node **head);
+void cariData(node **head);
+void tranverse(node *head);
+//==================================================================
