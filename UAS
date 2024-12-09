@@ -60,9 +60,9 @@ int main() {
 				fflush(stdin); scanf("%c", &pilih);
 				if (pilih == '1')
 					tambahAwal(&head);
-				/*else if (pilih == '2')
+				else if (pilih == '2')
 					tambahData(&head);
-				else if (pilih == '3')
+				/*else if (pilih == '3')
 					tambahAkhir(&head);
 				else if (pilih == '4')
 					hapusAwal(&head);
@@ -120,3 +120,61 @@ void tambahAwal(node **head) {
     *head = pNew;
 }
 
+// Fungsi untuk menambahkan data di posisi tertentu dalam linked list
+void tambahData(node **head) {
+    int pos, count = 1;
+    node *pCur = *head;
+    node *pNew = (node *)malloc(sizeof(node));
+    
+    printf("Masukkan posisi untuk menambah data lagu: ");
+    scanf("%d", &pos);
+    
+    printf("Masukkan ID Lagu: ");
+    scanf("%d", &pNew->id);
+    getchar();
+    
+    printf("Masukkan Judul Lagu: ");
+    fgets(pNew->judul, sizeof(pNew->judul), stdin);
+    pNew->judul[strcspn(pNew->judul, "\n")] = 0;
+    
+    printf("Masukkan Nama Artis: ");
+    fgets(pNew->artis, sizeof(pNew->artis), stdin);
+    pNew->artis[strcspn(pNew->artis, "\n")] = 0;
+
+    printf("Masukkan Durasi Lagu (dalam detik): ");
+    scanf("%d", &pNew->durasi);
+    
+    printf("Masukkan Tahun Rilis: ");
+    scanf("%d", &pNew->tahunRilis);
+
+    pNew->right = NULL;
+    pNew->left = NULL;
+
+    if (pos == 1) {
+        pNew->right = *head;
+        if (*head != NULL) {
+            (*head)->left = pNew;
+        }
+        *head = pNew;
+        return;
+    }
+    while (pCur != NULL && count < pos - 1) {
+        pCur = pCur->right;
+        count++;
+    }
+    if (pCur == NULL) {
+        printf("Posisi tidak valid, menambah data lagu di akhir.\n");
+        while (pCur->right != NULL) {
+            pCur = pCur->right;
+        }
+        pCur->right = pNew;
+        pNew->left = pCur;
+    } else {
+        pNew->right = pCur->right;
+        pCur->right = pNew;
+        pNew->left = pCur;
+        if (pNew->right != NULL) {
+            pNew->right->left = pNew;
+        }
+    }
+}
