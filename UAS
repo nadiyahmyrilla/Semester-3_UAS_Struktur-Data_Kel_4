@@ -68,11 +68,11 @@ int main() {
 					hapusAwal(&head);
 				else if (pilih == '5')
 					hapusData(&head);
-				/*else if (pilih == '6')
+				else if (pilih == '6')
 					hapusAkhir(&head);
 				else if (pilih == '7')
 					totalData(&head);
-				else if (pilih == '8')
+				/*else if (pilih == '8')
 					cariData(&head);
 				else if (pilih == '9'){
 					tranverse(head);
@@ -263,4 +263,38 @@ void hapusData(node **head) {
 
     free(pCur);
     printf("Data lagu di posisi %d berhasil dihapus.\n", pos);
+}
+
+// Fungsi untuk menghapus data di akhir linked list
+void hapusAkhir(node **head) {
+    node *pCur = *head;
+    
+    if (*head == NULL) {
+        printf("Daftar lagu kosong.\n");
+        return;
+    }
+    if (pCur->right == NULL) {
+        free(pCur);
+        *head = NULL;
+    } else {
+        while (pCur->right != NULL) {
+            pCur = pCur->right;
+        }
+        pCur->left->right = NULL;
+        free(pCur);
+    }
+    
+    printf("Data di akhir berhasil dihapus.\n");
+}
+
+// Fungsi untuk menghitung total data di linked list
+void totalData(node **head) {
+    node *pCur = *head;
+    int count = 0;
+    
+    while (pCur != NULL) {
+        count++;
+        pCur = pCur->right;
+    }
+    printf("Jumlah daftar lagu: %d\n", count);
 }
