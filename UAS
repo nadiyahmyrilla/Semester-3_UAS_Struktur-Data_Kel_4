@@ -72,12 +72,12 @@ int main() {
 					hapusAkhir(&head);
 				else if (pilih == '7')
 					totalData(&head);
-				/*else if (pilih == '8')
+				else if (pilih == '8')
 					cariData(&head);
 				else if (pilih == '9'){
 					tranverse(head);
 				    getch();
-				}*/ else {
+				} else {
 		                    printf("\nInvalid Choice\n");
 		                }
 			} while (pilih != 'q');
@@ -298,3 +298,47 @@ void totalData(node **head) {
     }
     printf("Jumlah daftar lagu: %d\n", count);
 }
+
+// Fungsi untuk mencari data berdasarkan ID
+void cariData(node **head) {
+    int targetID;
+    node *pCur = *head;
+    
+    printf("Masukkan ID Lagu yang ingin dicari: ");
+    scanf("%d", &targetID);
+    
+    while (pCur != NULL) {
+        if (pCur->id == targetID) {
+            printf("\nLagu ditemukan:\n");
+            printf("ID: %d\n", pCur->id);
+            printf("Judul: %s\n", pCur->judul);
+            printf("Artis: %s\n", pCur->artis);
+            printf("Durasi: %d detik\n", pCur->durasi);
+            printf("Tahun Rilis: %d\n", pCur->tahunRilis);
+            return;
+        }
+        pCur = pCur->right;
+    }
+    
+    printf("Lagu dengan ID %d tidak ditemukan.\n", targetID);
+}
+
+// Fungsi untuk menampilkan seluruh daftar lagu
+void tranverse(node *head) {
+    node *pCur = head;
+    if (pCur == NULL) {
+        printf("Daftar lagu kosong.\n");
+    } else {
+        printf("Daftar Lagu:\n");
+        while (pCur != NULL) {
+            printf("ID: %d\n", pCur->id);
+            printf("Judul: %s\n", pCur->judul);
+            printf("Artis: %s\n", pCur->artis);
+            printf("Durasi: %d detik\n", pCur->durasi);
+            printf("Tahun Rilis: %d\n", pCur->tahunRilis);
+            printf("---------------------------\n");
+            pCur = pCur->right;
+        }
+    }
+}
+//==================================================================
