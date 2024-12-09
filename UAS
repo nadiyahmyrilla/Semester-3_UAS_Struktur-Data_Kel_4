@@ -66,9 +66,9 @@ int main() {
 					tambahAkhir(&head);
 				else if (pilih == '4')
 					hapusAwal(&head);
-				/*else if (pilih == '5')
+				else if (pilih == '5')
 					hapusData(&head);
-				else if (pilih == '6')
+				/*else if (pilih == '6')
 					hapusAkhir(&head);
 				else if (pilih == '7')
 					totalData(&head);
@@ -234,3 +234,33 @@ void hapusAwal(node **head) {
     printf("Data lagu di awal berhasil dihapus.\n");
 }
 
+// Fungsi untuk menghapus data di posisi tertentu dalam linked list
+void hapusData(node **head) {
+    int pos, count = 1;
+    node *pCur = *head;
+    node *pPrev = NULL;
+    
+    printf("Masukkan posisi data lagu yang ingin dihapus: ");
+    scanf("%d", &pos);
+
+    if (pos == 1) {
+        hapusAwal(head);
+        return;
+    }
+    while (pCur != NULL && count < pos) {
+        pPrev = pCur;
+        pCur = pCur->right;
+        count++;
+    }
+    if (pCur == NULL) {
+        printf("Posisi tidak ditemukan.\n");
+        return;
+    }
+    pPrev->right = pCur->right;
+    if (pCur->right != NULL) {
+        pCur->right->left = pPrev;
+    }
+
+    free(pCur);
+    printf("Data lagu di posisi %d berhasil dihapus.\n", pos);
+}
