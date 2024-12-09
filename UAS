@@ -64,9 +64,9 @@ int main() {
 					tambahData(&head);
 				else if (pilih == '3')
 					tambahAkhir(&head);
-				/*else if (pilih == '4')
+				else if (pilih == '4')
 					hapusAwal(&head);
-				else if (pilih == '5')
+				/*else if (pilih == '5')
 					hapusData(&head);
 				else if (pilih == '6')
 					hapusAkhir(&head);
@@ -215,3 +215,22 @@ void tambahAkhir(node **head) {
         pNew->left = pCur;
     }
 }
+
+// Fungsi untuk menghapus data di awal linked list
+void hapusAwal(node **head) {
+    node *pCur;
+    
+    if (*head == NULL) {
+        printf("Daftar lagu kosong.\n");
+        return;
+    }
+    pCur = *head;
+    *head = pCur->right;
+    if (*head != NULL) {
+        (*head)->left = NULL;
+    }
+    
+    free(pCur);
+    printf("Data lagu di awal berhasil dihapus.\n");
+}
+
