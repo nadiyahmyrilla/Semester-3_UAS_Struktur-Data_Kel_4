@@ -152,13 +152,13 @@ int main() {
 					} else if (pilih == '5') {
 					    displayRear(myQueue);
 					    getch();
-					}/* else if (pilih == '6') {
+					} else if (pilih == '6') {
 					    queueCount(myQueue);
 					    getch();
 					} else if (pilih == '7') {
 					    destroy(&myQueue);
 					    break;
-					}*/ else {
+					} else {
 					    printf("\nInvalid Choice\n");
 					}
 			} while (pilih != 'q');
@@ -545,4 +545,17 @@ void displayRear(queue myQueue) {
         printf("Durasi: %d detik\n", myQueue.rear->durasi);
         printf("Tahun Rilis: %d\n", myQueue.rear->tahunRilis);
     }
+}
+
+// Fungsi untuk menampilkan jumlah elemen dalam queue
+void queueCount(queue myQueue) {
+    printf("Jumlah daftar putar lagu: %d\n", myQueue.count);
+}
+
+//menghapus seluruh antrian
+void destroy(queue *myQueue) {
+    while (myQueue->front != NULL) {
+        dequeue(myQueue);
+    }
+    printf("Tidak ada daftar putar lagu\n");
 }
