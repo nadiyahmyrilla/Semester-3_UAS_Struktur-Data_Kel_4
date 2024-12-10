@@ -26,6 +26,34 @@ void totalValue(node **head);
 void cariData(node **head);
 void tranverse(node *head);
 //==================================================================
+//===================QUEUE==========================================
+typedef struct queueNode {
+    int id;                 
+    char judul[100];        
+    char artis[100];       
+    int durasi;             
+    int tahunRilis;        
+    struct queueNode *next;  
+} queueNode;
+
+typedef struct {
+    queueNode *front;          
+    queueNode *rear;           
+    int count;                
+    int maxSize;               
+} queue;
+
+//fungsi untuk queue
+queue createQueue(int maxSize);
+queueNode* findLaguById(node *head, int id);
+int enqueue(int idlagu, node *head, queue *myQueue);
+void dequeue(queue *myQueue);
+void display(queue myQueue);
+void displayFront(queue myQueue);
+void displayRear(queue myQueue);
+void queueCount(queue myQueue);
+void destroy(queue *myQueue);
+//==================================================================
 
 //====================DATA UTAMA====================================
 int main() {
