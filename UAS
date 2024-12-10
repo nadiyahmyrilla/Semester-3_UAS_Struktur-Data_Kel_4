@@ -146,13 +146,13 @@ int main() {
 					} else if (pilih == '3') {
 					    display(myQueue);
 					    getch();
-					} /*else if (pilih == '4') {
+					} else if (pilih == '4') {
 					    displayFront(myQueue);
 					    getch();
 					} else if (pilih == '5') {
 					    displayRear(myQueue);
 					    getch();
-					} else if (pilih == '6') {
+					}/* else if (pilih == '6') {
 					    queueCount(myQueue);
 					    getch();
 					} else if (pilih == '7') {
@@ -501,6 +501,7 @@ void dequeue(queue *myQueue) {
     }
 }
 
+// Fungsi untuk menampilkan seluruh queue
 void display(queue myQueue) {
     queueNode *temp = myQueue.front;
     if (temp == NULL) {
@@ -515,5 +516,33 @@ void display(queue myQueue) {
             printf("Tahun Rilis: %d\n", temp->tahunRilis);
             temp = temp->next;
         }
+    }
+}
+
+// Fungsi untuk menampilkan elemen depan dari queue
+void displayFront(queue myQueue) {
+    if (myQueue.front == NULL) {
+        printf("Daftar putar lagu kosong\n");
+    } else {
+        printf("Awal daftar putar lagu: \n");
+        printf("ID: %d\n", myQueue.front->id);
+        printf("Judul: %s\n", myQueue.front->judul);
+        printf("Artis: %s\n", myQueue.front->artis);
+        printf("Durasi: %d detik\n", myQueue.front->durasi);
+        printf("Tahun Rilis: %d\n", myQueue.front->tahunRilis);
+    }
+}
+
+// Fungsi untuk menampilkan elemen belakang dari queue
+void displayRear(queue myQueue) {
+    if (myQueue.rear == NULL) {
+        printf("Daftar putar lagu kosong\n");
+    } else {
+        printf("Akhir daftar putar lagu: \n");
+        printf("ID: %d\n", myQueue.rear->id);
+        printf("Judul: %s\n", myQueue.rear->judul);
+        printf("Artis: %s\n", myQueue.rear->artis);
+        printf("Durasi: %d detik\n", myQueue.rear->durasi);
+        printf("Tahun Rilis: %d\n", myQueue.rear->tahunRilis);
     }
 }
