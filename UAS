@@ -395,3 +395,33 @@ void tranverse(node *head) {
     }
 }
 //==================================================================
+//===========================QUEUE==================================
+// Fungsi untuk membuat queue
+queue createQueue(int maxSize) {
+    queue myQueue;
+    myQueue.count = 0;
+    myQueue.maxSize = maxSize;
+    myQueue.front = NULL;
+    myQueue.rear = NULL;
+    return myQueue;
+}
+
+// Fungsi untuk mencari lagu berdasarkan ID di linked list
+queueNode* findLaguById(node *head, int id) {
+    node *current = head;
+    while (current != NULL) {
+        if (current->id == id) {
+            queueNode *qNode = (queueNode *)malloc(sizeof(queueNode));
+            qNode->id = current->id;
+            strcpy(qNode->judul, current->judul);
+            strcpy(qNode->artis, current->artis);
+            qNode->durasi = current->durasi;
+            qNode->tahunRilis = current->tahunRilis;
+            qNode->next = NULL;
+            return qNode;
+        }
+        current = current->right;
+    }
+    return NULL;
+}
+
