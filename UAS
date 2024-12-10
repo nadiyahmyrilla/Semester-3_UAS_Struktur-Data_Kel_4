@@ -140,10 +140,10 @@ int main() {
 						printf("Operasi menambah daftar putar lagu gagal");
 						getch();
 					    }
-					} /*else if (pilih == '2') {
+					} else if (pilih == '2') {
 					    dequeue(&myQueue);
 					    getch();
-					} else if (pilih == '3') {
+					} /*else if (pilih == '3') {
 					    display(myQueue);
 					    getch();
 					} else if (pilih == '4') {
@@ -481,4 +481,22 @@ int enqueue(int idlagu, node *head, queue *myQueue) {
     myQueue->rear = newPtr;
     myQueue->count++;
     return 1;
+}
+
+// Fungsi untuk menghapus elemen dari queue (dequeue)
+void dequeue(queue *myQueue) {
+    if (myQueue->count == 0) {
+        printf("\nDaftar putar lagu kosong\n");
+    } else {
+        queueNode *dltPtr = myQueue->front;
+        printf("\nHapus lagu dalam daftar putar: \n");
+        printf("Judul: %s\n", dltPtr->judul);
+        printf("Artis: %s\n", dltPtr->artis);
+        printf("Durasi: %d detik\n", dltPtr->durasi);
+        printf("Tahun Rilis: %d\n", dltPtr->tahunRilis);
+
+        myQueue->front = myQueue->front->next;
+        free(dltPtr);
+        myQueue->count--;
+    }
 }
