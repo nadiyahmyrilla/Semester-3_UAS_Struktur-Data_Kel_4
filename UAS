@@ -132,7 +132,7 @@ int main() {
 				    printf("\n7. Menghapus seluruh daftar putar lagu");
 				    printf("\nMasukan pilihan (gunakan 'q' untuk exit): ");
 				    fflush(stdin); scanf("%c", &pilih);
-				    /*if (pilih == '1') {
+				    if (pilih == '1') {
 					    printf("\nMasukan ID Lagu yang diinginkan: ");
 					    scanf("%d", &num);
 					    success = enqueue(num, head, &myQueue);
@@ -140,7 +140,7 @@ int main() {
 						printf("Operasi menambah daftar putar lagu gagal");
 						getch();
 					    }
-					} else if (pilih == '2') {
+					} /*else if (pilih == '2') {
 					    dequeue(&myQueue);
 					    getch();
 					} else if (pilih == '3') {
@@ -453,3 +453,32 @@ queueNode* findLaguById(node *head, int id) {
     return NULL;
 }
 
+// Fungsi untuk menambahkan elemen ke dalam queue (enqueue)
+int enqueue(int idlagu, node *head, queue *myQueue) {
+    if (myQueue->count >= myQueue->maxSize) {
+        return 0;
+    }
+
+    queueNode *foundLagu = findLaguById(head, idlagu);
+    if (foundLagu == NULL) {
+        return 0;
+    }
+
+    // membuat node baru untuk queue
+    queueNode *newPtr = (queueNode *)malloc(sizeof(queueNode));
+    newPtr->id = foundLagu->id;
+    strcpy(newPtr->judul, foundLagu->judul);
+    strcpy(newPtr->artis, foundLagu->artis);
+    newPtr->durasi = foundLagu->durasi;
+    newPtr->tahunRilis = foundLagu->tahunRilis;
+    newPtr->next = NULL;
+
+    if (myQueue->front == NULL) {
+        myQueue->front = newPtr;
+    } else {
+        myQueue->rear->next = newPtr;
+    }
+    myQueue->rear = newPtr;
+    myQueue->count++;
+    return 1;
+}
