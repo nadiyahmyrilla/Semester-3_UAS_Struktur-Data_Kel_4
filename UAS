@@ -204,7 +204,7 @@ int main() {
 					stackCount();
 				else if (pilih == '4')
 					destroyStack();
-				else if (pilih == '5'){
+				/*else if (pilih == '5'){
 					printStack();
 				    	getch();
 				}*/ else {
@@ -667,4 +667,22 @@ void stackTop() {
     printf("Durasi: %d detik\n", stack.top->song->durasi);
     printf("Tahun Rilis: %d\n", stack.top->song->tahunRilis);
     pop(); //menghapus setelah ditampilkan
+}
+
+//Menghitung jumlah lagu yang ada di stack
+int stackCount() {
+    int count = 0;
+    nodeStack* current = stack.top;
+    while (current != NULL) {
+        count++;
+        current = current->next;
+    }
+    return count;
+}
+
+//Menghapus seluruh isi stack
+void destroyStack() {
+    while (!isEmpty()) {
+        pop(); // Pop setiap elemen hingga stack kosong
+    }
 }
