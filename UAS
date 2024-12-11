@@ -204,10 +204,10 @@ int main() {
 					stackCount();
 				else if (pilih == '4')
 					destroyStack();
-				/*else if (pilih == '5'){
+				else if (pilih == '5'){
 					printStack();
 				    	getch();
-				}*/ else {
+				} else {
 		                    	printf("\nInvalid Choice\n");
 		                }
 			} while (pilih != 'q');
@@ -686,3 +686,21 @@ void destroyStack() {
         pop(); // Pop setiap elemen hingga stack kosong
     }
 }
+
+//Menampilkan seluruh lagu di stack
+void printStack() {
+    if (isEmpty()) {
+        printf("Stack kosong!\n");
+        return;
+    }
+
+    nodeStack* current = stack.top;
+    printf("Lagu-lagu yang akan diputar:\n");
+    
+    while (current != NULL) {
+        printf("ID: %d,", current->song->id);
+        printf("Judul: %s\n", current->song->judul);
+        current = current->next;
+    }
+}
+//======================================================================
