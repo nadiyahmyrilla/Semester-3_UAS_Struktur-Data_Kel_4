@@ -608,3 +608,14 @@ void destroy(queue *myQueue) {
     }
     printf("Tidak ada daftar putar lagu\n");
 }
+//======================================================================
+//=============================STACK====================================
+//fungsi untuk membuat stack
+void createStack() {
+    stack.top = NULL; // Stack dimulai dengan keadaan kosong
+}
+
+//Memeriksa apakah stack kosong
+bool isEmpty() {
+    return stack.top == NULL; // Mengecek apakah stack kosong
+}
