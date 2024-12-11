@@ -196,9 +196,9 @@ int main() {
 				printf("5. Menampilkan seluruh daftar putar lagu\n");
 				printf("MASUKKAN PILIHAN (tekan q untuk logout) : ");
 				fflush(stdin); scanf("%c", &pilih);
-				/*if (pilih == '1')
+				if (pilih == '1')
 					pop();
-				else if (pilih == '2')
+				/*else if (pilih == '2')
 					stackTop();
 				else if (pilih == '3')
 					stackCount();
@@ -618,4 +618,38 @@ void createStack() {
 //Memeriksa apakah stack kosong
 bool isEmpty() {
     return stack.top == NULL; // Mengecek apakah stack kosong
+}
+
+//menerima pointer ke lagu dari myQueue dan menambahkannya ke stack
+void push(queueNode* newLagu) {
+    nodeStack* newNode = (nodeStack*)malloc(sizeof(nodeStack));
+    if (newNode == NULL) {
+        printf("Alokasi memori gagal!\n");
+        return;
+    }
+    newNode->song = newLagu;
+    newNode->next = stack.top;
+    stack.top = newNode;
+}
+
+//Menghapus lagu di top stack (lagu telah diputar)
+void pop() {
+    if (isEmpty()) {
+        printf("Stack kosong!\n");
+        return;
+    }
+    
+    nodeStack* temp = stack.top;
+    
+    // Tampilkan informasi lagu yang sedang diputar
+    printf("Anda sedang melompat ke lagu ini:\n");
+    printf("ID: %d\n", temp->song->id);
+    printf("Judul: %s\n", temp->song->judul);
+    printf("Artis: %s\n", temp->song->artis);
+    printf("Durasi: %d detik\n", temp->song->durasi);
+    printf("Tahun Rilis: %d\n", temp->song->tahunRilis);
+    
+    // Pindahkan top stack ke node berikutnya
+    stack.top = stack.top->next;
+    free(temp);
 }
