@@ -54,7 +54,29 @@ void displayRear(queue myQueue);
 void queueCount(queue myQueue);
 void destroy(queue *myQueue);
 //==================================================================
+//===================STACK==========================================
+typedef struct nodeStack { 
+    queueNode* song;
+    struct nodeStack* next;
+} nodeStack;
 
+typedef struct Stack {
+    nodeStack* top;
+} Stack;
+
+Stack stack;
+
+//fungsi stack
+void createStack(int size);
+bool isFull();
+void push(queueNode* newSong);
+bool isEmpty();
+void pop();
+void stackTop();
+int stackCount();
+void destroyStack();
+void printStack();
+//==================================================================
 //====================DATA UTAMA====================================
 int main() {
 	node *head = NULL;
