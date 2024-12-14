@@ -2,7 +2,7 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <stdbool.h>
 //===================DOUBLE LINKED LIST=============================
 struct node {
     int id;                
@@ -611,7 +611,7 @@ void destroy(queue *myQueue) {
 //======================================================================
 //=============================STACK====================================
 //fungsi untuk membuat stack
-void createStack() {
+void createStack(int size) {
     stack.top = NULL; // Stack dimulai dengan keadaan kosong
 }
 
