@@ -194,7 +194,7 @@ int main() {
 				printf("---------MENU UNDO LAGU-----------------\n");
 				printf("1. Undo Penghapusan Lagu\n");
 				printf("2. Tampilkan Riwayat Penghapusan Lagu\n");
-                printf("3. Tampilkan Jumlah lagu yang dihapus");
+                printf("3. Tampilkan Jumlah lagu yang dihapus\n");
 				printf("4. Hapus Semua Riwayat Penghapusan Lagu\n");
 				printf("MASUKKAN PILIHAN (tekan q untuk logout) : ");
 				fflush(stdin); scanf("%c", &pilih);
@@ -657,13 +657,14 @@ int stackCount(Stack *myStack) {
 }
 
 //Menghitung jumlah lagu yang ada di stack
-int stackCount() {
+int stackCount(Stack *myStack) {
     int count = 0;
-    nodeStack* current = stack.top;
+    nodeStack* current = myStack->top;
     while (current != NULL) {
         count++;
         current = current->next;
     }
+    printf("Jumlah lagu yang dihapus: %d\n", count); // Cetak jumlah elemen di stack
     return count;
 }
 
