@@ -46,7 +46,7 @@ typedef struct {
 //fungsi untuk queue
 queue createQueue(int maxSize);
 queueNode* findLaguById(node *head, int id);
-int enqueue(int idlagu, node *head, queue *myQueue);
+int enqueue(queueNode *lagu, queue *myQueue);
 void dequeue(queue *myQueue);
 void display(queue myQueue);
 
@@ -156,11 +156,17 @@ int main() {
                             printf("Input ID lagu tidak valid!\n");
                             continue;
                         }
-                        if (enqueue(idlagu, head, &myQueue)) { 
-                            printf("Lagu berhasil ditambahkan ke daftar putar.\n");
-                        } else {
-                            printf("Gagal menambahkan lagu ke daftar putar.\n");
-                        }getch();
+                            queueNode* lagu = findLaguById(head, idlagu);
+    
+                        if (lagu == NULL) {
+                         printf("Lagu dengan ID %d tidak ditemukan!\n", idlagu);
+                         } else {
+                             if (enqueue(lagu, &myQueue)) { 
+                                printf("Lagu berhasil ditambahkan ke daftar putar.\n");
+                            } else {
+                                printf("Gagal menambahkan lagu ke daftar putar.\n");
+                            }
+                    }
                     } else if (pilih == '2') {
                         dequeue(&myQueue);  
                         getch();
@@ -512,28 +518,22 @@ queueNode* findLaguById(node *head, int id) {
 }
 
 // Fungsi untuk menambahkan elemen ke dalam queue (enqueue)
-int enqueue(int idlagu, node *head, queue *myQueue) {
+int enqueue(queueNode* lagu, queue* myQueue) {
     if (myQueue->count >= myQueue->maxSize) {
         printf("Playlist penuh! Tidak bisa menambahkan lagu.\n");
-        return 0; 
+        return 0;
     }
 
-    // Cari lagu berdasarkan ID di linked list
-    queueNode *lagu = findLaguById(head, idlagu);                           
-    if (lagu == NULL) {
-        printf("Lagu dengan ID %d tidak ditemukan!\n", idlagu);
-        return 0; 
-    }
-    
     if (myQueue->count == 0) {
-        myQueue->front = myQueue->rear = lagu;
-    } else{
-        myQueue->rear->next = lagu;
-        myQueue->rear = lagu; 
+        myQueue->front = myQueue->rear = lagu; 
+    } else {
+        myQueue->rear->next = lagu; 
+        myQueue->rear = lagu;      
     }
 
     myQueue->count++; 
-    return 1; 
+    printf("Lagu dengan ID %d berhasil ditambahkan ke playlist.\n", lagu->id);
+    return 1;  
 }
 
 /// Fungsi untuk menghapus lagu dari queue (dequeue)
@@ -542,16 +542,20 @@ void dequeue(queue *myQueue) {
         printf("Playlist kosong! Tidak ada lagu untuk dihapus.\n");
         return;
     }
+
     queueNode *temp = myQueue->front;
+
+    push(&myStack, temp);
+
     myQueue->front = myQueue->front->next;
-    free(temp); 
-
-    myQueue->count--; 
-
-    if (myQueue->count == 0) {
-        myQueue->rear = NULL; 
+    if (myQueue->front == NULL) {
+        myQueue->rear = NULL;
     }
-    printf("lagu berhasil di hapus dari playlist.\n");
+
+    free(temp);
+    myQueue->count--;
+
+    printf("Lagu berhasil dihapus dari playlist dan disimpan ke stack untuk undo.\n");
 }
 
 // Fungsi untuk menampilkan semua lagu di queue
