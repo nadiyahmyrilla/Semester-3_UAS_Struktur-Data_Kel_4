@@ -627,34 +627,33 @@ queueNode* pop(Stack *myStack) {
     return song; 
 }
     
-    nodeStack* temp = stack.top;
-    
-    // Tampilkan informasi lagu yang sedang diputar
-    printf("Anda sedang melompat ke lagu ini:\n");
-    printf("ID: %d\n", temp->song->id);
-    printf("Judul: %s\n", temp->song->judul);
-    printf("Artis: %s\n", temp->song->artis);
-    printf("Durasi: %d detik\n", temp->song->durasi);
-    printf("Tahun Rilis: %d\n", temp->song->tahunRilis);
-    
-    // Pindahkan top stack ke node berikutnya
-    stack.top = stack.top->next;
-    free(temp);
+// Fungsi Undo untuk memindahkan lagu dari Stack ke Queue
+void undoMultipleSongs(queue* q, Stack* myStack, int count) {
+    int undoneCount = 0;
+    for (int i = 0; i < count; i++) {
+        if (isEmpty(myStack)) { 
+            printf("Hanya %d lagu yang berhasil di-undo.\n", undoneCount);
+            break;
+        }
+        
+        queueNode* recoveredSong = pop(myStack); 
+        if (recoveredSong != NULL) {
+            enqueue(recoveredSong, q); 
+            undoneCount++;
+        }
+    }
+    printf("%d lagu berhasil di-undo dan dikembalikan ke playlist.\n", undoneCount);
 }
 
-//Menampilkan lagu yang ada dibagian atas stack
-void stackTop() {
-    if (isEmpty()) {
-        printf("Stack kosong!\n");
-        return;
+int stackCount(Stack *myStack) {
+    int count = 0;
+    nodeStack* current = myStack->top;
+    while (current != NULL) {
+        count++;
+        current = current->next;
     }
-    printf("Lagu sedang diputar:\n");
-    printf("ID: %d\n", stack.top->song->id);
-    printf("Judul: %s\n", stack.top->song->judul);
-    printf("Artis: %s\n", stack.top->song->artis);
-    printf("Durasi: %d detik\n", stack.top->song->durasi);
-    printf("Tahun Rilis: %d\n", stack.top->song->tahunRilis);
-    pop(); //menghapus setelah ditampilkan
+    printf("Jumlah lagu yang dihapus: %d\n", count); // Cetak jumlah elemen di stack
+    return count;
 }
 
 //Menghitung jumlah lagu yang ada di stack
@@ -669,26 +668,30 @@ int stackCount() {
 }
 
 //Menghapus seluruh isi stack
-void destroyStack() {
-    while (!isEmpty()) {
-        pop(); // Pop setiap elemen hingga stack kosong
+void destroyStack(Stack *myStack) {
+    while (!isEmpty(myStack)) {
+        pop(myStack); // Pop setiap elemen hingga stack kosong
     }
+    printf("Semua riwayat penghapusan lagu telah dihapus.\n");
 }
 
-//Menampilkan seluruh lagu di stack
-void printStack() {
-    if (isEmpty()) {
-        printf("Stack kosong!\n");
+//Menampilkan seluruh lagu yang dihapus di stack
+void printStack(Stack *myStack) {
+    if (isEmpty(myStack)) {
+        printf("Stack kosong! Tidak ada riwayat penghapusan lagu.\n");
         return;
     }
 
-    nodeStack* current = stack.top;
-    printf("Lagu-lagu yang akan diputar:\n");
-    
+    nodeStack *current = myStack->top;
+    printf("\n--- Riwayat Penghapusan Lagu ---\n");
     while (current != NULL) {
-        printf("ID: %d,", current->song->id);
+        printf("ID: %d\n", current->song->id);
         printf("Judul: %s\n", current->song->judul);
+        printf("Artis: %s\n", current->song->artis);
+        printf("Durasi: %d detik\n", current->song->durasi);
+        printf("Tahun Rilis: %d\n", current->song->tahunRilis);
+        printf("-------------------\n");
         current = current->next;
     }
+    printf("\n");
 }
-//======================================================================
