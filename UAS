@@ -146,7 +146,8 @@ int main() {
                     printf("\n1. Menambah daftar putar lagu");
                     printf("\n2. Menghapus daftar putar lagu");
                     printf("\n3. Display daftar putar lagu");
-
+                    printf("\n4. Menghapus seluruh daftar putar lagu"); 
+                    printf("\n5. Cari Lagu di Daftar Putar (findMyLagu)"); 
                     printf("\nMasukan pilihan (gunakan 'q' untuk exit): ");
                     scanf(" %c", &pilih);
                     if (pilih == '1') {
@@ -160,15 +161,19 @@ int main() {
                         } else {
                             printf("Gagal menambahkan lagu ke daftar putar.\n");
                         }getch();
-
                     } else if (pilih == '2') {
                         dequeue(&myQueue);  
                         getch();
-
                     } else if (pilih == '3') {
                         display(myQueue); 
                         getch();
-                    }
+                    } else if (pilih == '4') { 
+                        destroy(&myQueue);
+                        getch();
+                    } else if (pilih == '5') { 
+                        queueNode(myQueue);
+                        getch();
+                    } 
                      
 			} while (pilih != 'q');
 		} else if (pilih == '3'){
@@ -467,6 +472,24 @@ queue createQueue(int maxSize) {
     myQueue.maxSize = maxSize;
     myQueue.front = myQueue.rear = NULL;    
     return myQueue;
+}
+// Fungsi untuk mencari lagu di dalam queue (findMyLagu) berdasarkan ID
+void findMyLagu(queue myQueue) {
+    int targetID;
+    queueNode *pCur = myQueue.front;
+
+    printf("\n--- Cari Lagu di Daftar Putar ---\n");
+    printf("Masukkan ID Lagu yang ingin dicari: ");
+    scanf("%d", &targetID);
+
+    while (pCur != NULL) {
+        if (pCur->id == targetID) {
+            return; 
+        }
+        pCur = pCur->next;
+    }
+
+    printf("Lagu dengan ID %d tidak ditemukan.\n", targetID);
 }
 
 // Fungsi untuk mencari lagu berdasarkan ID di linked list
