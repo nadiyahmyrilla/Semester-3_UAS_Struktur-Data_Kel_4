@@ -598,32 +598,34 @@ void destroy(queue *myQueue) {
 //=============================STACK====================================
 //fungsi untuk membuat stack
 void createStack(int size) {
-    stack.top = NULL; // Stack dimulai dengan keadaan kosong
+    stack.top = NULL;
 }
 
-//Memeriksa apakah stack kosong
-bool isEmpty() {
-    return stack.top == NULL; // Mengecek apakah stack kosong
+bool isEmpty(Stack *myStack) {
+    return myStack->top == NULL; 
 }
 
-//menerima pointer ke lagu dari myQueue dan menambahkannya ke stack
-void push(queueNode* newLagu) {
-    nodeStack* newNode = (nodeStack*)malloc(sizeof(nodeStack));
+void push(Stack *myStack, queueNode *newSong) {
+    nodeStack *newNode = (nodeStack *)malloc(sizeof(nodeStack));
     if (newNode == NULL) {
-        printf("Alokasi memori gagal!\n");
+        printf("Memory allocation failed!\n");
         return;
     }
-    newNode->song = newLagu;
-    newNode->next = stack.top;
-    stack.top = newNode;
+    newNode->song = newSong;
+    newNode->next = myStack->top;  
+    myStack->top = newNode;       
 }
 
-//Menghapus lagu di top stack (lagu telah diputar)
-void pop() {
-    if (isEmpty()) {
-        printf("Stack kosong!\n");
-        return;
+queueNode* pop(Stack *myStack) {
+    if (isEmpty(myStack)) {
+        return NULL;
     }
+    nodeStack *temp = myStack->top;
+    queueNode *song = temp->song; 
+    myStack->top = myStack->top->next;  
+    free(temp);  
+    return song; 
+}
     
     nodeStack* temp = stack.top;
     
