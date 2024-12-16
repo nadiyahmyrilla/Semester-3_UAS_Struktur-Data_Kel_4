@@ -91,7 +91,7 @@ int main() {
 		printf("Masukkan Apa Yang Ingin Dilakukan\n");
 		printf("1. Daftar Lagu\n");
 		printf("2. Daftar Putar Lagu\n");
-		printf("3. Memutar Lagu\n");
+		printf("3. Undo Hapus Lagu\n");
 		printf("MASUKKAN PILIHAN (tekan q untuk logout) : ");
 		fflush(stdin); scanf("%c", &pilih);
 		if (pilih == '1'){
@@ -191,28 +191,31 @@ int main() {
 			head = NULL;
 			do{
 				system("cls");
-				printf("---------MENU PUTAR LAGU-----------------\n");
-				printf("1. Melompat ke lagu\n");
-				printf("2. Memutar lagu\n");
-				printf("3. Tampilkan jumlah daftar putar lagu\n");
-				printf("4. Menghapus seluruh daftar putar lagu\n");
-				printf("5. Menampilkan seluruh daftar putar lagu\n");
+				printf("---------MENU UNDO LAGU-----------------\n");
+				printf("1. Undo Penghapusan Lagu\n");
+				printf("2. Tampilkan Riwayat Penghapusan Lagu\n");
+                printf("3. Tampilkan Jumlah lagu yang dihapus");
+				printf("4. Hapus Semua Riwayat Penghapusan Lagu\n");
 				printf("MASUKKAN PILIHAN (tekan q untuk logout) : ");
 				fflush(stdin); scanf("%c", &pilih);
-				if (pilih == '1')
-					pop();
-				else if (pilih == '2')
-					stackTop();
-				else if (pilih == '3')
-					stackCount();
-				else if (pilih == '4')
-					destroyStack();
-				else if (pilih == '5'){
-					printStack();
+				if (pilih == '1'){
+                    int jumlahUndo;
+                    printf("Masukkan jumlah lagu yang ingin di-undo: ");
+                    scanf("%d", &jumlahUndo);
+					undoMultipleSongs(&myQueue, &myStack, jumlahUndo);
+                    getch ();
+                } else if (pilih == '2'){
+					printStack(&myStack);
+                    getch ();
+                }else if (pilih == '3'){
+                    stackCount(&myStack);
+                    getch();
+                } else if (pilih == '4'){
+					destroyStack(&myStack);
 				    	getch();
 				} else {
-		                    	printf("\nInvalid Choice\n");
-		                }
+		                printf("\nInvalid Choice\n");
+		        }
 			} while (pilih != 'q');
 		} else {
 			printf("\nInvalid Choice\n");
