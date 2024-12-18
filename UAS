@@ -49,6 +49,7 @@ queueNode* findLaguById(node *head, int id);
 int enqueue(queueNode *lagu, queue *myQueue);
 void dequeue(queue *myQueue);
 void display(queue myQueue);
+void destroy(queue *myQueue);
 
 //==================================================================
 //===================STACK==========================================
@@ -643,17 +644,6 @@ void undoMultipleSongs(queue* q, Stack* myStack, int count) {
         }
     }
     printf("%d lagu berhasil di-undo dan dikembalikan ke playlist.\n", undoneCount);
-}
-
-int stackCount(Stack *myStack) {
-    int count = 0;
-    nodeStack* current = myStack->top;
-    while (current != NULL) {
-        count++;
-        current = current->next;
-    }
-    printf("Jumlah lagu yang dihapus: %d\n", count); // Cetak jumlah elemen di stack
-    return count;
 }
 
 //Menghitung jumlah lagu yang ada di stack
