@@ -639,7 +639,7 @@ void undoMultipleSongs(queue* q, Stack* myStack, int count) {
         
         // Cek apakah queue penuh
         if (q->count >= q->maxSize) {
-            printf("Queue penuh! Tidak dapat mengembalikan lebih banyak lagu.\n");
+            printf("Queue penuh! Tidak dapat melakukan undo lagu.\n");
             break;
         }
 
