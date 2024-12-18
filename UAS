@@ -202,20 +202,20 @@ int main() {
 		                    int jumlahUndo;
 		                    printf("Masukkan jumlah lagu yang ingin di-undo: ");
 		                    scanf("%d", &jumlahUndo);
-				undoMultipleSongs(&myQueue, &myStack, jumlahUndo);
+				    undoMultipleSongs(&myQueue, &myStack, jumlahUndo);
 		                    getch ();
 		                } else if (pilih == '2'){
-					printStack(&myStack);
-                    getch ();
-                }else if (pilih == '3'){
-                    stackCount(&myStack);
-                    getch();
-                } else if (pilih == '4'){
-					destroyStack(&myStack);
-				    	getch();
+				    printStack(&myStack);
+		                    getch ();
+		                }else if (pilih == '3'){
+		                    stackCount(&myStack);
+		                    getch();
+		                } else if (pilih == '4'){
+			            destroyStack(&myStack);
+				    getch();
 				} else {
-		                printf("\nInvalid Choice\n");
-		        }
+		                    printf("\nInvalid Choice\n");
+		        	}
 			} while (pilih != 'q');
 		} else {
 			printf("\nInvalid Choice\n");
@@ -672,14 +672,12 @@ void printStack(Stack *myStack) {
     }
 
     nodeStack *current = myStack->top;
-    printf("\n--- Riwayat Penghapusan Lagu ---\n");
+    printf("-----------------------------------------------------------------------------------------------------\n");
+    printf("  ID Lagu         Judul Lagu       Nama Artis           Durasi Lagu(dalam detik)        Tahun Rilis  \n");
+    printf("-----------------------------------------------------------------------------------------------------\n");
     while (current != NULL) {
-        printf("ID: %d\n", current->song->id);
-        printf("Judul: %s\n", current->song->judul);
-        printf("Artis: %s\n", current->song->artis);
-        printf("Durasi: %d detik\n", current->song->durasi);
-        printf("Tahun Rilis: %d\n", current->song->tahunRilis);
-        printf("-------------------\n");
+        printf("  %-20d %-15s %-25s %-30d %-12d \n", current->song->id, current->song->judul, current->song->artis, current->song->durasi, current->song->tahunRilis);
+        printf("----------------------------\n");
         current = current->next;
     }
     printf("\n");
