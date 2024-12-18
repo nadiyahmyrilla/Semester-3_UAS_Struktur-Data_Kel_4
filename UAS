@@ -466,14 +466,11 @@ void tranverse(node *head) {
     if (pCur == NULL) {
         printf("Daftar lagu kosong.\n");
     } else {
-        printf("Daftar Lagu:\n");
+        printf("-----------------------------------------------------------------------------------------------------\n");
+        printf("  ID Lagu         Judul Lagu       Nama Artis           Durasi Lagu(dalam detik)        Tahun Rilis  \n");
+        printf("-----------------------------------------------------------------------------------------------------\n");
         while (pCur != NULL) {
-            printf("ID: %d\n", pCur->id);
-            printf("Judul: %s\n", pCur->judul);
-            printf("Artis: %s\n", pCur->artis);
-            printf("Durasi: %d detik\n", pCur->durasi);
-            printf("Tahun Rilis: %d\n", pCur->tahunRilis);
-            printf("---------------------------\n");
+            printf("  %-20d %-15s %-25s %-30d %-12d \n", pCur->id, pCur->judul, pCur->artis, pCur->durasi, pCur->tahunRilis);
             pCur = pCur->right;
         }
     }
