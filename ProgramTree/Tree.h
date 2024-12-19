@@ -1,5 +1,5 @@
-#ifndef MANAJEMEN_MUSIK_H
-#define MANAJEMEN_MUSIK_H
+#ifndef MANAJEMEN_TREE_H
+#define MANAJEMEN_TREE_H
 
 #include <stdio.h>
 #include <stdlib.h>

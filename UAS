@@ -91,6 +91,11 @@ nodeCircular* createNode(char *judul, char *artis, int durasi);
 void enqueueFromQueue(queue *myQueue, queueNode *lagu);
 void playNextSong(nodeCircular *circularHead);
 //==================================================================
+//========================MANAJEMEN FILE============================
+node* createNodeFile(int id, const char *judul, const char *artis, int durasi, int tahunRilis);
+node* insertNode(node *root, node *newNode);
+node* loadData(const char *filename);
+void saveData(node *root, const char *filename);
 //========================GLOBAL VARIABLE===========================
 queue myQueue;
 Stack myStack;
@@ -101,7 +106,17 @@ treeNode* treeRoot = NULL;
 int main() {
 	node *head = NULL;
 	char pilih; 
-    nodeCircular *circularHead = NULL; 
+    nodeCircular *circularHead = NULL;
+    node *root = NULL;
+    const char *filename = "lagu_data.txt";
+    root = loadData(filename);
+
+    // Menambahkan lagu secara manual (misalnya untuk testing)
+    node *newNode = createNodeFile(1, "Lagu 1", "Artis 1", 300, 2020);
+    root = insertNode(root, newNode);
+
+    // Menyimpan data lagu ke file
+    saveData(root, filename);
 
 	head = NULL;
 	do{
@@ -132,15 +147,12 @@ int main() {
 				fflush(stdin); scanf("%d", &pilih);
 				if (pilih == 1){
                     tambahAwal(&head);
-                    treeRoot = insertTree(treeRoot, pNew->id, pNew->judul, pNew->artis, pNew->durasi, pNew->tahunRilis);
                     getch();
                 } else if (pilih == 2){
                     tambahData(&head);
-                    treeRoot = insertTree(treeRoot, pNew->id, pNew->judul, pNew->artis, pNew->durasi, pNew->tahunRilis);
                     getch();
                 } else if (pilih == 3){
                     tambahAkhir(&head);
-                    treeRoot = insertTree(treeRoot, pNew->id, pNew->judul, pNew->artis, pNew->durasi, pNew->tahunRilis);
                     getch();
                 } else if (pilih == 4){
                     hapusAwal(&head);
@@ -187,58 +199,58 @@ int main() {
 			queue myQueue = createQueue(maxSize);
 			
 			do {
-			    system("cls");
-	                    printf("\n-----MENU DAFTAR PUTAR-----");
-	                    printf("\n1. Menambah daftar putar lagu");
-	                    printf("\n2. Menghapus daftar putar lagu");
-	                    printf("\n3. Display daftar putar lagu");
-	                    printf("\n4. Menghapus seluruh daftar putar lagu"); 
-	                    printf("\n5. Cari Lagu di Daftar Putar (findMyLagu)");
-                        printf("\n6. Putar Lagu Secara Berulang");
-	                    printf("\nMasukan pilihan (gunakan 'q' untuk exit): ");
-	                    scanf(" %c", &pilih);
-	                    if (pilih == '1') {
-	                        printf("\nMasukkan ID Lagu yang ingin ditambahkan: ");
-	                        if (scanf("%d", &idlagu) != 1) { 
-	                            printf("Input ID lagu tidak valid!\n");
-	                            continue;
-	                        }
-	                            queueNode* lagu = findLaguById(head, idlagu);
-	    
-	                        if (lagu == NULL) {
-	                            printf("Lagu dengan ID %d tidak ditemukan!\n", idlagu);
-	                        } else {
-	                            if (enqueue(lagu, &myQueue)) {
-                                    enqueueFromQueue(&myQueue, &circularHead);
-	                            } else {
-	                                printf("Gagal menambahkan lagu ke daftar putar.\n");
-	                            }
-	                        }
-	                        getch();
-	                    } else if (pilih == '2') {
-	                        if (myQueue.front != NULL) {
-	                            dequeue(&myQueue);
-	                        }else {
-	                            printf("\nLagu berhasil dihapus dari playlist.\n");
-	                            printf("*Sihlahkan ke menu undo jika salah menghapus lagu.");
-	                        } 
-	                        getch();
-	                    } else if (pilih == '3') {
-	                        display(myQueue); 
-	                        getch();
-	                    } else if (pilih == '4') { 
-	                        destroy(&myQueue);
-                            circularHead = NULL;
-	                        printf("\nSeluruh daftar putar lagu berhasil dihapus.\n");
-	                        printf("*Sihlahkan ke menu undo jika salah menghapus lagu.");
-	                        getch();
-	                    } else if (pilih == '5') { 
-	                        findMyLagu(&myQueue);
-	                        getch();
-	                    } else if (pilih == '6'){
-                            playNextSong(circularHead);
-                            getch();
+                system("cls");
+                printf("\n-----MENU DAFTAR PUTAR-----");
+                printf("\n1. Menambah daftar putar lagu");
+                printf("\n2. Menghapus daftar putar lagu");
+                printf("\n3. Display daftar putar lagu");
+                printf("\n4. Menghapus seluruh daftar putar lagu"); 
+                printf("\n5. Cari Lagu di Daftar Putar (findMyLagu)");
+                printf("\n6. Putar Lagu Secara Berulang");
+                printf("\nMasukan pilihan (gunakan 'q' untuk exit): ");
+                scanf(" %c", &pilih);
+                if (pilih == '1') {
+                    printf("\nMasukkan ID Lagu yang ingin ditambahkan: ");
+                    if (scanf("%d", &idlagu) != 1) { 
+                        printf("Input ID lagu tidak valid!\n");
+                        continue;
                         }
+                    queueNode* lagu = findLaguById(head, idlagu);
+                    
+                    if (lagu == NULL) {
+                        printf("Lagu dengan ID %d tidak ditemukan!\n", idlagu);
+                        } else {
+                            if (enqueue(lagu, &myQueue)) {
+                                    enqueueFromQueue(&myQueue, &circularHead);
+                            } else {
+                                printf("Gagal menambahkan lagu ke daftar putar.\n");
+                            }
+                        }
+                    getch();
+                } else if (pilih == '2') {
+                    if (myQueue.front != NULL) {
+                        dequeue(&myQueue);
+                    }else {
+                        printf("\nLagu berhasil dihapus dari playlist.\n");
+                        printf("*Sihlahkan ke menu undo jika salah menghapus lagu.");
+                    } 
+                    getch();
+                } else if (pilih == '3') {
+                    display(myQueue); 
+                    getch();
+                } else if (pilih == '4') { 
+                    destroy(&myQueue);
+                    circularHead = NULL;
+                    printf("\nSeluruh daftar putar lagu berhasil dihapus.\n");
+                    printf("*Sihlahkan ke menu undo jika salah menghapus lagu.");
+                    getch();
+                } else if (pilih == '5') { 
+                    findMyLagu(&myQueue);
+                    getch();
+                } else if (pilih == '6'){
+                    playNextSong(circularHead);
+                    getch();
+                }
 			} while (pilih != 'q');
 		} else if (pilih == '3'){
 			head = NULL;
@@ -252,27 +264,27 @@ int main() {
 				printf("MASUKKAN PILIHAN (tekan q untuk logout) : ");
 				fflush(stdin); scanf("%c", &pilih);
 				if (pilih == '1'){
-		                    int jumlahUndo;
-		                    printf("Masukkan jumlah lagu yang ingin di-undo: ");
-		                    scanf("%d", &jumlahUndo);
-				    undoMultipleSongs(&myQueue, &myStack, jumlahUndo);
-		                    getch ();
-		                } else if (pilih == '2'){
-				    printStack(&myStack);
-		                    getch ();
-		                }else if (pilih == '3'){
-		                    stackCount(&myStack);
-		                    getch();
-		                } else if (pilih == '4'){
-			            destroyStack(&myStack);
-				    getch();
+                    int jumlahUndo;
+                    printf("Masukkan jumlah lagu yang ingin di-undo: ");
+                    scanf("%d", &jumlahUndo);
+                    undoMultipleSongs(&myQueue, &myStack, jumlahUndo);
+                    getch ();
+                } else if (pilih == '2'){
+                    printStack(&myStack);
+                    getch ();
+                }else if (pilih == '3'){
+                    stackCount(&myStack);
+                    getch();
+                } else if (pilih == '4'){
+                    destroyStack(&myStack);
+                    getch();
 				} else {
-		                    printf("\nInvalid Choice\n");
-		        	}
+                    printf("\nInvalid Choice\n");
+                    }
 			} while (pilih != 'q');
 		} else {
 			printf("\nInvalid Choice\n");
-	        }
+        }
 	} while (pilih != 'c');
 
 	return 0;
@@ -314,6 +326,7 @@ void tambahAwal(node **head) {
         (*head)->left = pNew;
     }
     *head = pNew;
+    treeRoot = insertTree(treeRoot, pNew->id, pNew->judul, pNew->artis, pNew->durasi, pNew->tahunRilis);
 }
 
 // Fungsi untuk menambahkan data di posisi tertentu dalam linked list
@@ -380,6 +393,7 @@ void tambahData(node **head) {
             pNew->right->left = pNew;
         }
     }
+    treeRoot = insertTree(treeRoot, pNew->id, pNew->judul, pNew->artis, pNew->durasi, pNew->tahunRilis);
 }
 
 // Fungsi untuk menambahkan data di akhir linked list
@@ -424,6 +438,7 @@ void tambahAkhir(node **head) {
         pCur->right = pNew;
         pNew->left = pCur;
     }
+    treeRoot = insertTree(treeRoot, pNew->id, pNew->judul, pNew->artis, pNew->durasi, pNew->tahunRilis);
 }
 
 // Fungsi untuk menghapus data di awal linked list
@@ -820,4 +835,70 @@ void playNextSong(nodeCircular *circularHead){
         printf("Judul: %s\n Artis: %s\n %d detik\n", pCur->judul, pCur->artis, pCur->durasi);
         pCur = pCur->next;
     } while(pCur != circularHead);
+}
+//======================================================================
+//=============================MANAJEMEN FILE===========================
+node* createNodeFile(int id, const char *judul, const char *artis, int durasi, int tahunRilis) {
+    node *newNode = (node*)malloc(sizeof(node));  // Alokasikan memori untuk node baru
+    newNode->id = id;
+    strcpy(newNode->judul, judul);
+    strcpy(newNode->artis, artis);
+    newNode->durasi = durasi;
+    newNode->tahunRilis = tahunRilis;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+node* insertNode(node *root, node *newNode) {
+    if (root == NULL) {
+        return newNode;
+    }
+
+    // Menentukan posisi di kiri atau kanan berdasarkan ID
+    if (newNode->id < root->id) {
+        root->left = insertNode(root->left, newNode);  // Masukkan ke kiri jika ID lebih kecil
+    } else {
+        root->right = insertNode(root->right, newNode);  // Masukkan ke kanan jika ID lebih besar
+    }
+    return root;
+}
+
+node* loadData(const char *filename) {
+    FILE *file = fopen(filename, "r");  // Membuka file dengan mode "baca"
+    if (file == NULL) {
+        printf("Error opening file for loading.\n");
+        return NULL;
+    }
+
+    node *root = NULL;
+    int id, durasi, tahunRilis;
+    char judul[100], artis[100];
+
+    // Membaca setiap baris data lagu dari file
+    while (fscanf(file, "%d;%99[^;];%99[^;];%d;%d\n", &id, judul, artis, &durasi, &tahunRilis) != EOF) {
+        node *newNode = createNodeFile(id, judul, artis, durasi, tahunRilis);
+        root = insertNode(root, newNode);  // Menambahkannya ke dalam binary tree
+    }
+
+    fclose(file);  // Menutup file setelah selesai
+    return root;
+}
+
+void saveData(node *root, const char *filename) {
+    FILE *file = fopen(filename, "w");  // Membuka file untuk menulis (mode "w" untuk menulis)
+    if (file == NULL) {
+        printf("Error opening file for saving.\n");
+        return;
+    }
+
+    // Fungsi rekursif untuk traversal inorder dan menyimpan data ke file
+    if (root != NULL) {
+        saveData(root->left, filename);  // Traverse ke kiri
+        // Menulis data dari node ke file dengan format yang sama
+        fprintf(file, "%d;%s;%s;%d;%d\n", root->id, root->judul, root->artis, root->durasi, root->tahunRilis);
+        saveData(root->right, filename);  // Traverse ke kanan
+    }
+
+    fclose(file);  // Menutup file setelah selesai
 }
