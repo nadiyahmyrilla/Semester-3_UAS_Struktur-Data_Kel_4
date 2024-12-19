@@ -50,7 +50,7 @@ int enqueue(queueNode *lagu, queue *myQueue);
 void dequeue(queue *myQueue);
 void display(queue myQueue);
 void destroy(queue *myQueue);
-
+void findMyLagu(queue *myQueue);
 //==================================================================
 //===================STACK==========================================
 typedef struct nodeStack { 
@@ -181,26 +181,33 @@ int main() {
 	    
 	                        if (lagu == NULL) {
 	                         printf("Lagu dengan ID %d tidak ditemukan!\n", idlagu);
-	                         } else {
-	                             if (enqueue(lagu, &myQueue)) { 
-	                                printf("Lagu berhasil ditambahkan ke daftar putar.\n");
+	                        } else {
+	                            if (enqueue(lagu, &myQueue)) {
 	                            } else {
 	                                printf("Gagal menambahkan lagu ke daftar putar.\n");
 	                            }
-	                    	}
-			    } else if (pilih == '2') {
-				dequeue(&myQueue);  
-				getch();
-			    } else if (pilih == '3') {
-				display(myQueue); 
-				getch();
-			    } else if (pilih == '4') { 
-				destroy(&myQueue);
-				getch();
-			    } else if (pilih == '5') { 
-				queueNode(myQueue);
-				getch();
-			    } 
+	                        }
+	                        getch();
+	                    } else if (pilih == '2') {
+	                        if (myQueue.front != NULL) {
+	                            dequeue(&myQueue);
+	                        }else {
+	                            printf("\nLagu berhasil dihapus dari playlist.\n");
+	                            printf("*Sihlahkan ke menu undo jika salah menghapus lagu.");
+	                        } 
+	                        getch();
+	                    } else if (pilih == '3') {
+	                        display(myQueue); 
+	                        getch();
+	                    } else if (pilih == '4') { 
+	                        destroy(&myQueue);
+	                        printf("\nSeluruh daftar putar lagu berhasil dihapus.\n");
+	                        printf("*Sihlahkan ke menu undo jika salah menghapus lagu.");
+	                        getch();
+	                    } else if (pilih == '5') { 
+	                        findMyLagu(&myQueue);
+	                        getch();
+	                    }
 			} while (pilih != 'q');
 		} else if (pilih == '3'){
 			head = NULL;
@@ -518,9 +525,9 @@ queue createQueue(int maxSize) {
     return myQueue;
 }
 // Fungsi untuk mencari lagu di dalam queue (findMyLagu) berdasarkan ID
-void findMyLagu(queue myQueue) {
+void findMyLagu(queue *myQueue) {
     int targetID;
-    queueNode *pCur = myQueue.front;
+    queueNode *pCur = myQueue->front;
 
     printf("\n--- Cari Lagu di Daftar Putar ---\n");
     printf("Masukkan ID Lagu yang ingin dicari: ");
@@ -528,11 +535,16 @@ void findMyLagu(queue myQueue) {
 
     while (pCur != NULL) {
         if (pCur->id == targetID) {
-            return; 
+            printf("\nLagu ditemukan:\n");
+            printf("ID: %d\n", pCur->id);
+            printf("Judul: %s\n", pCur->judul);
+            printf("Artis: %s\n", pCur->artis);
+            printf("Durasi: %d detik\n", pCur->durasi);
+            printf("Tahun Rilis: %d\n", pCur->tahunRilis);
+            return;
         }
         pCur = pCur->next;
     }
-
     printf("Lagu dengan ID %d tidak ditemukan.\n", targetID);
 }
 
@@ -574,7 +586,7 @@ int enqueue(queueNode* lagu, queue* myQueue) {
     return 1;  
 }
 
-/// Fungsi untuk menghapus lagu dari queue (dequeue)
+// Fungsi untuk menghapus lagu dari queue (dequeue)
 void dequeue(queue *myQueue) {
     if (myQueue->count == 0) {
         printf("Playlist kosong! Tidak ada lagu untuk dihapus.\n");
@@ -592,8 +604,6 @@ void dequeue(queue *myQueue) {
 
     free(temp);
     myQueue->count--;
-
-    printf("Lagu berhasil dihapus dari playlist dan disimpan ke stack untuk undo.\n");
 }
 
 // Fungsi untuk menampilkan semua lagu di queue
@@ -618,7 +628,6 @@ void destroy(queue *myQueue) {
     while (myQueue->front != NULL) {
         dequeue(myQueue);
     }
-    printf("Tidak ada daftar putar lagu\n");
 }
 //======================================================================
 //=============================STACK====================================
@@ -685,7 +694,7 @@ int stackCount(Stack *myStack) {
         count++;
         current = current->next;
     }
-    printf("Jumlah lagu yang dihapus: %d\n", count); // Cetak jumlah elemen di stack
+    printf("\nJumlah lagu yang dihapus: %d\n", count); // Cetak jumlah elemen di stack
     return count;
 }
 
@@ -694,7 +703,7 @@ void destroyStack(Stack *myStack) {
     while (!isEmpty(myStack)) {
         pop(myStack); // Pop setiap elemen hingga stack kosong
     }
-    printf("Semua riwayat penghapusan lagu telah dihapus.\n");
+    printf("\nSemua riwayat penghapusan lagu telah dihapus.\n");
 }
 
 //Menampilkan seluruh lagu yang dihapus di stack
