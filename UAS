@@ -73,8 +73,23 @@ queueNode* stackTop(Stack *myStack);
 void destroyStack(Stack *myStack);           
 void printStack(Stack *myStack);             
 int stackCount(Stack *myStack);              
-void undoMultipleSongs(queue *q, Stack *myStack, int count); 
+void undoMultipleSongs(queue *q, Stack *myStack, int count);
 
+//==================================================================
+//===================CIRCULAR LINKED LIST===========================
+/*Fungsi untuk membuat node baru*/
+struct nodeCircular {
+    char judul[100];
+    char artis[100];
+    int durasi;
+    struct nodeCircular *next;
+};
+typedef struct nodeCircular nodeCircular;
+
+nodeCircular* createNode(char *judul, char *artis, int durasi);
+void enqueueFromQueue(queue *myQueue, queueNode *lagu);
+void playNextSong(nodeCircular *circularHead);
+//==================================================================
 //========================GLOBAL VARIABLE===========================
 queue myQueue;
 Stack myStack;   
@@ -84,6 +99,7 @@ Stack myStack;
 int main() {
 	node *head = NULL;
 	char pilih; 
+    nodeCircular *circularHead = NULL; 
 
 	head = NULL;
 	do{
@@ -153,7 +169,7 @@ int main() {
 			int success = 0;
 			int maxSize;
 			int num;
-            		int idlagu;
+            int idlagu;
 			
 			printf("Masukkan kapasitas maksimum daftar putar lagu: ");
 			scanf("%d", &maxSize);
@@ -168,7 +184,8 @@ int main() {
 	                    printf("\n2. Menghapus daftar putar lagu");
 	                    printf("\n3. Display daftar putar lagu");
 	                    printf("\n4. Menghapus seluruh daftar putar lagu"); 
-	                    printf("\n5. Cari Lagu di Daftar Putar (findMyLagu)"); 
+	                    printf("\n5. Cari Lagu di Daftar Putar (findMyLagu)");
+                        printf("\n6. Putar Lagu Secara Berulang");
 	                    printf("\nMasukan pilihan (gunakan 'q' untuk exit): ");
 	                    scanf(" %c", &pilih);
 	                    if (pilih == '1') {
@@ -180,9 +197,10 @@ int main() {
 	                            queueNode* lagu = findLaguById(head, idlagu);
 	    
 	                        if (lagu == NULL) {
-	                         printf("Lagu dengan ID %d tidak ditemukan!\n", idlagu);
+	                            printf("Lagu dengan ID %d tidak ditemukan!\n", idlagu);
 	                        } else {
 	                            if (enqueue(lagu, &myQueue)) {
+                                    enqueueFromQueue(&myQueue, &circularHead);
 	                            } else {
 	                                printf("Gagal menambahkan lagu ke daftar putar.\n");
 	                            }
@@ -201,13 +219,17 @@ int main() {
 	                        getch();
 	                    } else if (pilih == '4') { 
 	                        destroy(&myQueue);
+                            circularHead = NULL;
 	                        printf("\nSeluruh daftar putar lagu berhasil dihapus.\n");
 	                        printf("*Sihlahkan ke menu undo jika salah menghapus lagu.");
 	                        getch();
 	                    } else if (pilih == '5') { 
 	                        findMyLagu(&myQueue);
 	                        getch();
-	                    }
+	                    } else if (pilih == '6'){
+                            playNextSong(circularHead);
+                            getch();
+                        }
 			} while (pilih != 'q');
 		} else if (pilih == '3'){
 			head = NULL;
@@ -216,7 +238,7 @@ int main() {
 				printf("---------MENU UNDO LAGU-----------------\n");
 				printf("1. Undo Penghapusan Lagu\n");
 				printf("2. Tampilkan Riwayat Penghapusan Lagu\n");
-                		printf("3. Tampilkan Jumlah lagu yang dihapus\n");
+                printf("3. Tampilkan Jumlah lagu yang dihapus\n");
 				printf("4. Hapus Semua Riwayat Penghapusan Lagu\n");
 				printf("MASUKKAN PILIHAN (tekan q untuk logout) : ");
 				fflush(stdin); scanf("%c", &pilih);
@@ -243,7 +265,7 @@ int main() {
 			printf("\nInvalid Choice\n");
 	        }
 	} while (pilih != 'q');
-  
+
 	return 0;
 }
 //================================================================
@@ -723,4 +745,58 @@ void printStack(Stack *myStack) {
         current = current->next;
     }
     printf("\n");
+}
+//======================================================================
+//=============================CIRCULAR LINKED LIST=====================
+//Membuat node baru bernama lagu yang berisi informasi lagu
+nodeCircular* createNode(char *judul, char *artis, int durasi){
+    nodeCircular *newNode = (nodeCircular *)malloc(sizeof(nodeCircular));
+    strcpy(newNode->judul, judul);
+    strcpy(newNode->artis, artis);
+    newNode->durasi = durasi;
+    newNode->next = newNode;
+    return newNode;
+}
+
+//Menambahkan lagu dari queue ke circular linked list
+void enqueueFromQueue(queue *myQueue, nodeCircular **circularHead){
+    if(myQueue->count == 0){
+        printf("Queue kosong! Tidak ada lagu untuk dipindahkan.\n");
+        return;
+    }
+    //Mengambil node dari queue
+    queueNode *queueNode = myQueue->front;
+
+    //Membuat nodeCircular baru 
+    nodeCircular *newNode = createNode(queueNode->judul, queueNode->artis, queueNode->durasi);
+
+    //Jika circular list kosong
+    if(*circularHead == NULL){
+        *circularHead = newNode;
+        newNode->next = newNode;
+    }
+    else{
+        nodeCircular *temp = *circularHead;
+        while(temp->next != *circularHead){
+            temp = temp->next;
+        }
+        temp->next = newNode;
+        newNode->next = *circularHead;
+    }
+
+    printf("Lagu '%s' berhasil ditambahkan ke daftar putar circular.\n", newNode->judul);
+}
+
+void playNextSong(nodeCircular *circularHead){
+    if(circularHead == NULL){
+        printf("Daftar putar circular kosong.\n");
+        return;
+    }
+
+    nodeCircular *pCur = circularHead;
+    printf("Lagu yang akan diputar selanjutnya:\n");
+    do{
+        printf("Judul: %s\n Artis: %s\n %d detik\n", pCur->judul, pCur->artis, pCur->durasi);
+        pCur = pCur->next;
+    } while(pCur != circularHead);
 }
