@@ -125,7 +125,7 @@ int main() {
 				printf("7. Total jumlah lagu\n");
 				printf("8. Mencari lagu didalam daftar\n");
 				printf("9. cetak isi daftar lagu\n");
-				printf("MASUKKAN PILIHAN (tekan q untuk logout) : ");
+				printf("MASUKKAN PILIHAN (tekan c untuk logout) : ");
 				fflush(stdin); scanf("%c", &pilih);
 				if (pilih == '1'){
 		                    tambahAwal(&head);
@@ -264,7 +264,7 @@ int main() {
 		} else {
 			printf("\nInvalid Choice\n");
 	        }
-	} while (pilih != 'q');
+	} while (pilih != 'c');
 
 	return 0;
 }
