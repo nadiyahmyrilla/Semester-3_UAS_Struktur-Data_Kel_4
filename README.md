@@ -10,7 +10,7 @@ Mata Kuliah Struktur Data E081
 Dosen Pengampu : Fawwaz Ali Akbar, S.Kom., M.Kom.
 
 
-Nama Anggota Kelompok 3: 
+Nama Anggota Kelompok 4: 
 1.	Andra Pratama                      (23081010112)
 2.	Nadiyah Myrilla                    (23081010124)
 3.	Putu Bayu Ari P.                   (23081010127)
