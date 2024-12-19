@@ -4,7 +4,7 @@ Pembuatan program ini terinspirasi dari aplikasi pemutaran musik yang terdapat b
 Dalam program Playlist Musik ini digunakan berbagai jenis Struktur Data, seperti Linked list, Stack, Queue, dan Tree.
 Program ini juga dibuat untuk memenuhi tugas akhir mata kuliah Struktur Data.
 
-Mata Kuliah Struktur Data E81
+Mata Kuliah Struktur Data E081
 
 
 Dosen Pengampu : Fawwaz Ali Akbar, S.Kom., M.Kom.
