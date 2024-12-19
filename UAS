@@ -674,12 +674,19 @@ bool isEmpty(Stack *myStack) {
 void push(Stack *myStack, queueNode *newSong) {
     nodeStack *newNode = (nodeStack *)malloc(sizeof(nodeStack));
     if (newNode == NULL) {
-        printf("Memory allocation failed!\n");
+        printf("Gagal mengalokasikan memori untuk node stack!\n");
         return;
     }
-    newNode->song = newSong;
-    newNode->next = myStack->top;  
-    myStack->top = newNode;       
+  
+    newNode->song = (queueNode *)malloc(sizeof(queueNode));
+    if (newNode->song == NULL) {
+        printf("Gagal mengalokasikan memori untuk lagu!\n");
+        free(newNode);
+        return;
+    }
+    memcpy(newNode->song, newSong, sizeof(queueNode));
+    newNode->next = myStack->top;
+    myStack->top = newNode;
 }
 
 queueNode* pop(Stack *myStack) {
@@ -749,12 +756,17 @@ void printStack(Stack *myStack) {
     printf("  ID Lagu         Judul Lagu       Nama Artis           Durasi Lagu(dalam detik)        Tahun Rilis  \n");
     printf("-----------------------------------------------------------------------------------------------------\n");
     while (current != NULL) {
-        printf("  %-20d %-15s %-25s %-30d %-12d \n", current->song->id, current->song->judul, current->song->artis, current->song->durasi, current->song->tahunRilis);
-        printf("----------------------------\n");
+        printf("  %-15d %-20s %-25s %-30d %-12d\n", 
+               current->song->id, 
+               current->song->judul, 
+               current->song->artis, 
+               current->song->durasi, 
+               current->song->tahunRilis);
         current = current->next;
     }
-    printf("\n");
+    printf("-----------------------------------------------------------------------------------------------------\n");
 }
+
 //======================================================================
 //=============================CIRCULAR LINKED LIST=====================
 //Membuat node baru bernama lagu yang berisi informasi lagu
