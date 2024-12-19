@@ -105,7 +105,8 @@ void saveData(node *root, const char *filename);
 //========================GLOBAL VARIABLE===========================
 queue myQueue;
 Stack myStack;
-treeNode *treeRoot = NULL;
+nodeArtis *album;
+node *root = NULL;
 
 //==================================================================
 //====================DATA UTAMA====================================
@@ -113,17 +114,10 @@ int main()
 {
     node *head = NULL;
     char pilih;
+    int pilih1;
     nodeCircular *circularHead = NULL;
-    node *root = NULL;
     const char *filename = "lagu_data.txt";
     root = loadData(filename);
-
-    // Menambahkan lagu secara manual (misalnya untuk testing)
-    node *newNode = createNodeFile(1, "Lagu 1", "Artis 1", 300, 2020);
-    root = insertNode(root, newNode);
-
-    // Menyimpan data lagu ke file
-    saveData(root, filename);
 
     head = NULL;
     do
@@ -134,7 +128,7 @@ int main()
         printf("1. Daftar Lagu\n");
         printf("2. Daftar Putar Lagu\n");
         printf("3. Undo Hapus Lagu\n");
-        printf("MASUKKAN PILIHAN (tekan q untuk logout) : ");
+        printf("MASUKKAN PILIHAN (tekan c untuk logout) : ");
         fflush(stdin);
         scanf("%c", &pilih);
         if (pilih == '1')
@@ -152,47 +146,47 @@ int main()
                 printf("6. Hapus lagu diakhir\n");
                 printf("7. Total jumlah lagu\n");
                 printf("8. Mencari lagu didalam daftar\n");
-                printf("9. cetak isi daftar lagu\n");
-                printf("10. Tambah lagu ke tree\n");
+                printf("9. Cetak isi daftar lagu\n");
+                printf("10. Cetak album Artis\n");
                 printf("MASUKKAN PILIHAN (tekan 0 untuk logout) : ");
                 fflush(stdin);
-                scanf("%d", &pilih);
-                if (pilih == 1)
+                scanf("%d", &pilih1);
+                if (pilih1 == 1)
                 {
                     tambahAwal(&head);
                     getch();
                 }
-                else if (pilih == 2)
+                else if (pilih1 == 2)
                 {
                     tambahData(&head);
                     getch();
                 }
-                else if (pilih == 3)
+                else if (pilih1 == 3)
                 {
                     tambahAkhir(&head);
                     getch();
                 }
-                else if (pilih == 4)
+                else if (pilih1 == 4)
                 {
                     hapusAwal(&head);
                     getch();
                 }
-                else if (pilih == 5)
+                else if (pilih1 == 5)
                 {
                     hapusData(&head);
                     getch();
                 }
-                else if (pilih == 6)
+                else if (pilih1 == 6)
                 {
                     hapusAkhir(&head);
                     getch();
                 }
-                else if (pilih == 7)
+                else if (pilih1 == 7)
                 {
                     totalData(&head);
                     getch();
                 }
-                else if (pilih == 8)
+                else if (pilih1 == 8)
                 {
                     int targetID;
                     printf("\nMasukkan ID Lagu yang ingin dicari: ");
@@ -204,22 +198,28 @@ int main()
                     }
                     getch();
                 }
-                else if (pilih == 9)
+                else if (pilih1 == 9)
                 {
                     tranverse(head);
                     getch();
                 }
-                else if (pilih == 10)
+                else if (pilih1 == 10)
                 {
-                    printf("Daftar Lagu dalam Tree:\n");
-                    printTree(treeRoot);
-                    getch();
+                    char artistName[100];
+                    printf("Masukkan nama artis: ");
+                    getchar(); // Menghapus newline dari input sebelumnya
+                    fgets(artistName, sizeof(artistName), stdin);
+                    artistName[strcspn(artistName, "\n")] = 0; // Menghilangkan newline
+
+                    printf("Daftar Lagu dalam Tree untuk artis %s:\n", artistName);
+                    displaySongsByArtist(album, artistName); // album adalah pointer ke root tree
+                    getch(); // Tunggu input dari pengguna
                 }
                 else
                 {
                     printf("\nInvalid Choice\n");
                 }
-            } while (pilih != 0);
+            } while (pilih1 != 0);
         }
         else if (pilih == '2')
         {
@@ -356,9 +356,12 @@ int main()
         }
         else
         {
-            printf("\nInvalid Choice\n");
+            continue;
         }
     } while (pilih != 'c');
+
+    // Menyimpan data lagu ke file
+    saveData(root, filename);
 
     return 0;
 }
@@ -402,7 +405,10 @@ void tambahAwal(node **head)
         (*head)->left = pNew;
     }
     *head = pNew;
-    treeRoot = insertTree(treeRoot, pNew->id, pNew->judul, pNew->artis, pNew->durasi, pNew->tahunRilis);
+    album = insertArtist(album, pNew->artis);
+    addSongToArtist(album, pNew->artis, pNew->id, pNew->judul, pNew->durasi, pNew->tahunRilis);
+
+    saveData(*head, "lagu_data.txt");
 }
 
 // Fungsi untuk menambahkan data di posisi tertentu dalam linked list
@@ -479,7 +485,10 @@ void tambahData(node **head)
             pNew->right->left = pNew;
         }
     }
-    treeRoot = insertTree(treeRoot, pNew->id, pNew->judul, pNew->artis, pNew->durasi, pNew->tahunRilis);
+    album = insertArtist(album, pNew->artis);
+    addSongToArtist(album, pNew->artis, pNew->id, pNew->judul, pNew->durasi, pNew->tahunRilis);
+
+     *head = insertNode(*head, pNew);
 }
 
 // Fungsi untuk menambahkan data di akhir linked list
@@ -530,7 +539,10 @@ void tambahAkhir(node **head)
         pCur->right = pNew;
         pNew->left = pCur;
     }
-    treeRoot = insertTree(treeRoot, pNew->id, pNew->judul, pNew->artis, pNew->durasi, pNew->tahunRilis);
+    album = insertArtist(album, pNew->artis);
+    addSongToArtist(album, pNew->artis, pNew->id, pNew->judul, pNew->durasi, pNew->tahunRilis);
+
+    *head = insertNode(*head, pNew);
 }
 
 // Fungsi untuk menghapus data di awal linked list
@@ -927,11 +939,11 @@ void printStack(Stack *myStack)
     while (current != NULL)
     {
         printf("  %-15d %-20s %-25s %-30d %-12d\n",
-               current->song->id,
-               current->song->judul,
-               current->song->artis,
-               current->song->durasi,
-               current->song->tahunRilis);
+            current->song->id,
+            current->song->judul,
+            current->song->artis,
+            current->song->durasi,
+            current->song->tahunRilis);
         current = current->next;
     }
     printf("-----------------------------------------------------------------------------------------------------\n");
@@ -1039,7 +1051,7 @@ node *loadData(const char *filename)
     FILE *file = fopen(filename, "r"); // Membuka file dengan mode "baca"
     if (file == NULL)
     {
-        printf("Error opening file for loading.\n");
+        printf("Error! Gagal membuka file untuk memuat.\n");
         return NULL;
     }
 

@@ -6,22 +6,27 @@
 #include <string.h>
 
 // Struct Tree
-struct treeNode {
+struct Song {
     int id;
     char judul[100];
-    char artis[100];
     int durasi;             
     int tahunRilis;
-    struct treeNode *left;
-    struct treeNode *right;
-    struct treeNode *next;
+    struct Song *next;
 };
-typedef struct treeNode treeNode;
+typedef struct Song Song;
 
-// Fungsi untuk menambahkan node ke tree
-treeNode* insertTree(treeNode* root, int id, char* judul, char* artis, int durasi, int tahunRilis);
+struct nodeArtis{
+    char nama[100];
+    struct Song *songs; // Pointer ke lagu-lagu artis
+    struct nodeArtis *left; // Pointer ke artis di kiri
+    struct nodeArtis *right; // Pointer ke artis di kanan
+};
+typedef struct nodeArtis nodeArtis;
 
-// Fungsi untuk mencetak tree
-void printTree(treeNode* root);
+nodeArtis *insertArtist(nodeArtis* root, const char *namaArtis);
+
+void addSongToArtist(nodeArtis *root, const char *namaArtis, int id, const char *judul, int durasi, int tahunRilis);
+
+void displaySongsByArtist(nodeArtis *root, const char *namaArtis);
 
 #endif
