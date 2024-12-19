@@ -93,7 +93,7 @@ int main() {
 		printf("1. Daftar Lagu\n");
 		printf("2. Daftar Putar Lagu\n");
 		printf("3. Undo Hapus Lagu\n");
-		printf("MASUKKAN PILIHAN (tekan q untuk logout) : ");
+		printf("MASUKKAN PILIHAN (tekan c untuk logout) : ");
 		fflush(stdin); scanf("%c", &pilih);
 		if (pilih == '1'){
 			head = NULL;
@@ -242,7 +242,7 @@ int main() {
 		} else {
 			printf("\nInvalid Choice\n");
 	        }
-	} while (pilih != 'q');
+	} while (pilih != 'c');
   
 	return 0;
 }
