@@ -14,6 +14,7 @@ struct treeNode {
     int tahunRilis;
     struct treeNode *left;
     struct treeNode *right;
+    struct treeNode *next;
 };
 typedef struct treeNode treeNode;
 

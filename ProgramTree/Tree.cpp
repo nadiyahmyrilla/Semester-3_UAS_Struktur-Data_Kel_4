@@ -23,11 +23,27 @@ treeNode* insertTree(treeNode* root, int id, char* judul, char* artis, int duras
 }
 
 // Fungsi untuk mencetak tree
-void printTree(treeNode* root) {
-    if (root != NULL) {
-        printTree(root->left);
-        printf("ID: %d, Judul: %s, Artis: %s, Durasi: %d detik, Tahun Rilis: %d\n", 
-                root->id, root->judul, root->artis, root->durasi, root->tahunRilis);
-        printTree(root->right);
+void printTree(treeNode *root) {
+    if (root == NULL) {
+        return;
     }
+
+    // Traverse ke kiri
+    printTree(root->left);
+
+    // Cetak informasi artis
+    printf("%s\n", root->artis);
+    
+    // Cetak lagu-lagu di bawah artis
+    treeNode *currentSong = root->next; // Asumsikan next menunjuk ke lagu-lagu
+    while (currentSong != NULL) {
+        printf("   %s\n", currentSong->judul);
+        printf("      Durasi: %d detik\n", currentSong->durasi);
+        printf("      Tahun Rilis: %d\n", currentSong->tahunRilis);
+        currentSong = currentSong->next; // Pindah ke lagu berikutnya
+    }
+    printf("\n"); // Tambahkan baris kosong untuk pemisah antar artis
+
+    // Traverse ke kanan
+    printTree(root->right);
 }
