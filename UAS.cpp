@@ -88,7 +88,7 @@ struct nodeCircular {
 typedef struct nodeCircular nodeCircular;
 
 nodeCircular* createNode(char *judul, char *artis, int durasi);
-void enqueueFromQueue(queue *myQueue, queueNode *lagu);
+void enqueueFromQueue(queue *myQueue, nodeCircular **circularHead);
 void playNextSong(nodeCircular *circularHead);
 //==================================================================
 //========================MANAJEMEN FILE============================
@@ -692,7 +692,7 @@ void push(Stack *myStack, queueNode *newSong) {
         printf("Gagal mengalokasikan memori untuk node stack!\n");
         return;
     }
-  
+
     newNode->song = (queueNode *)malloc(sizeof(queueNode));
     if (newNode->song == NULL) {
         printf("Gagal mengalokasikan memori untuk lagu!\n");
@@ -772,11 +772,11 @@ void printStack(Stack *myStack) {
     printf("-----------------------------------------------------------------------------------------------------\n");
     while (current != NULL) {
         printf("  %-15d %-20s %-25s %-30d %-12d\n", 
-               current->song->id, 
-               current->song->judul, 
-               current->song->artis, 
-               current->song->durasi, 
-               current->song->tahunRilis);
+        current->song->id, 
+        current->song->judul, 
+        current->song->artis, 
+        current->song->durasi, 
+        current->song->tahunRilis);
         current = current->next;
     }
     printf("-----------------------------------------------------------------------------------------------------\n");
