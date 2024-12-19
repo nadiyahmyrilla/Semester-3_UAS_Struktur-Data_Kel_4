@@ -23,7 +23,7 @@ void hapusData(node **head);
 void hapusAkhir(node **head);
 void totalData(node **head);
 void totalValue(node **head);
-void cariData(node **head);
+bool cariData(node *head, int targetID);
 void tranverse(node *head);
 //==================================================================
 //===================QUEUE==========================================
@@ -111,23 +111,38 @@ int main() {
 				printf("9. cetak isi daftar lagu\n");
 				printf("MASUKKAN PILIHAN (tekan q untuk logout) : ");
 				fflush(stdin); scanf("%c", &pilih);
-				if (pilih == '1')
-					tambahAwal(&head);
-				else if (pilih == '2')
-					tambahData(&head);
-				else if (pilih == '3')
-					tambahAkhir(&head);
-				else if (pilih == '4')
-					hapusAwal(&head);
-				else if (pilih == '5')
-					hapusData(&head);
-				else if (pilih == '6')
-					hapusAkhir(&head);
-				else if (pilih == '7')
-					totalData(&head);
-				else if (pilih == '8')
-					cariData(&head);
-				else if (pilih == '9'){
+				if (pilih == '1'){
+		                    tambahAwal(&head);
+		                    getch();
+		                } else if (pilih == '2'){
+		                    tambahData(&head);
+		                    getch();
+		                } else if (pilih == '3'){
+		                    tambahAkhir(&head);
+		                    getch();
+		                } else if (pilih == '4'){
+		                    hapusAwal(&head);
+		                    getch();
+		                } else if (pilih == '5'){
+		                    hapusData(&head);
+		                    getch();
+		                } else if (pilih == '6') {
+		                    hapusAkhir(&head);
+		                    getch();
+		                } else if (pilih == '7') {
+		                    totalData(&head);
+		                    getch();
+		                } else if (pilih == '8'){
+		                    int targetID;
+		                    printf("\nMasukkan ID Lagu yang ingin dicari: ");
+		                    scanf("%d", &targetID);
+		
+		                    //karean boolean menggunakan ini untuk memanggil
+		                    if (!cariData(head, targetID)) {
+		                        printf("Lagu dengan ID %d tidak ditemukan.\n", targetID);
+		                    }
+		                    getch();
+		                } else if (pilih == '9'){
 					tranverse(head);
 				    getch();
 				} else {
@@ -230,8 +245,15 @@ int main() {
 void tambahAwal(node **head) {
     node *pNew = (node *)malloc(sizeof(node));
     
-    printf("Masukkan ID Lagu: ");
+    printf("\nMasukkan ID Lagu: ");
     scanf("%d", &pNew->id);
+
+    // Cek apakah ID sudah ada menggunakan cariData
+    if (cariData(*head, pNew->id)) {  // Perbaiki di sini
+        printf("ID Lagu sudah ada, tidak dapat menambah data.\n");
+        free(pNew);  // Menghapus node yang sudah dialokasikan
+        return;
+    }
     getchar();
     
     printf("Masukkan Judul Lagu: ");
@@ -262,11 +284,18 @@ void tambahData(node **head) {
     node *pCur = *head;
     node *pNew = (node *)malloc(sizeof(node));
     
-    printf("Masukkan posisi untuk menambah data lagu: ");
+    printf("\nMasukkan posisi untuk menambah data lagu: ");
     scanf("%d", &pos);
     
     printf("Masukkan ID Lagu: ");
     scanf("%d", &pNew->id);
+
+    // Cek apakah ID sudah ada menggunakan cariData
+    if (cariData(*head, pNew->id)) {
+        printf("ID Lagu sudah ada, tidak dapat menambah data.\n");
+        free(pNew);
+        return;
+    }
     getchar();
     
     printf("Masukkan Judul Lagu: ");
@@ -320,9 +349,16 @@ void tambahAkhir(node **head) {
     node *pNew = (node *)malloc(sizeof(node));
     node *pCur = *head;
     
-    printf("Masukkan ID Lagu: ");
+    printf("\nMasukkan ID Lagu: ");
     scanf("%d", &pNew->id);
-    getchar(); // Menghapus newline setelah input ID
+
+    // Cek apakah ID sudah ada menggunakan cariData
+    if (cariData(*head, pNew->id)) {
+        printf("ID Lagu sudah ada, tidak dapat menambah data.\n");
+        free(pNew);
+        return;
+    }
+    getchar();
     
     printf("Masukkan Judul Lagu: ");
     fgets(pNew->judul, sizeof(pNew->judul), stdin);
@@ -367,7 +403,7 @@ void hapusAwal(node **head) {
     }
     
     free(pCur);
-    printf("Data lagu di awal berhasil dihapus.\n");
+    printf("\nData lagu di awal berhasil dihapus.\n");
 }
 
 // Fungsi untuk menghapus data di posisi tertentu dalam linked list
@@ -376,7 +412,7 @@ void hapusData(node **head) {
     node *pCur = *head;
     node *pPrev = NULL;
     
-    printf("Masukkan posisi data lagu yang ingin dihapus: ");
+    printf("\nMasukkan posisi data lagu yang ingin dihapus: ");
     scanf("%d", &pos);
 
     if (pos == 1) {
@@ -420,7 +456,7 @@ void hapusAkhir(node **head) {
         free(pCur);
     }
     
-    printf("Data di akhir berhasil dihapus.\n");
+    printf("\nData di akhir berhasil dihapus.\n");
 }
 
 // Fungsi untuk menghitung total data di linked list
@@ -432,31 +468,28 @@ void totalData(node **head) {
         count++;
         pCur = pCur->right;
     }
-    printf("Jumlah daftar lagu: %d\n", count);
+    printf("\nJumlah daftar lagu: %d\n", count);
 }
 
 // Fungsi untuk mencari data berdasarkan ID
-void cariData(node **head) {
-    int targetID;
-    node *pCur = *head;
-    
-    printf("Masukkan ID Lagu yang ingin dicari: ");
-    scanf("%d", &targetID);
+bool cariData(node *head, int targetID) {
+    node *pCur = head;
     
     while (pCur != NULL) {
         if (pCur->id == targetID) {
-            printf("\nLagu ditemukan:\n");
+            // Jika ID ditemukan, tampilkan informasi lagu
+            printf("\nDetail lagu:\n");
             printf("ID: %d\n", pCur->id);
             printf("Judul: %s\n", pCur->judul);
             printf("Artis: %s\n", pCur->artis);
             printf("Durasi: %d detik\n", pCur->durasi);
             printf("Tahun Rilis: %d\n", pCur->tahunRilis);
-            return;
+            return true; // ID ditemukan
         }
         pCur = pCur->right;
     }
-    
-    printf("Lagu dengan ID %d tidak ditemukan.\n", targetID);
+    // Jika tidak ditemukan
+    return false; // ID tidak ditemukan
 }
 
 // Fungsi untuk menampilkan seluruh daftar lagu
