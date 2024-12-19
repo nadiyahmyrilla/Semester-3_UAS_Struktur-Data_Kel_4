@@ -1,4 +1,4 @@
-# PROGRAM PLAYLIST MUSIK
+# PROGRAM SISTEM PLAYLIST MUSIK
 Program Playlist Musik merupakan program yang dibuat dalam bahasa C. 
 Pembuatan program ini terinspirasi dari aplikasi pemutaran musik yang terdapat berbagai fitur di dalamnya.
 Dalam program Playlist Musik ini digunakan berbagai jenis Struktur Data, seperti Linked list, Stack, Queue, dan Tree.
