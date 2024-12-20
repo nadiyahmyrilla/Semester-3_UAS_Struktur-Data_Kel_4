@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
-#include "Tree.h"
+
 //===================DOUBLE LINKED LIST=============================
 struct node
 {
@@ -44,11 +44,10 @@ typedef struct
     queueNode *front;
     queueNode *rear;
     int count;
-    int maxSize;
 } queue;
 
 // fungsi untuk queue
-queue createQueue(int maxSize);
+queue createQueue();
 queueNode *findLaguById(node *head, int id);
 int enqueue(queueNode *lagu, queue *myQueue);
 void dequeue(queue *myQueue);
@@ -97,17 +96,9 @@ nodeCircular *createNode(char *judul, char *artis, int durasi);
 void enqueueFromQueue(queue *myQueue, nodeCircular **circularHead);
 void playNextSong(nodeCircular *circularHead);
 //==================================================================
-//========================MANAJEMEN FILE============================
-node *createNodeFile(int id, const char *judul, const char *artis, int durasi, int tahunRilis);
-node *insertNode(node *root, node *newNode);
-node *loadData(const char *filename);
-void saveData(node *root, const char *filename);
 //========================GLOBAL VARIABLE===========================
 queue myQueue;
 Stack myStack;
-nodeArtis *album;
-node *root = NULL;
-
 //==================================================================
 //====================DATA UTAMA====================================
 int main()
@@ -116,8 +107,6 @@ int main()
     char pilih;
     int pilih1;
     nodeCircular *circularHead = NULL;
-    const char *filename = "lagu_data.txt";
-    root = loadData(filename);
 
     head = NULL;
     do
@@ -203,18 +192,6 @@ int main()
                     tranverse(head);
                     getch();
                 }
-                else if (pilih1 == 10)
-                {
-                    char artistName[100];
-                    printf("Masukkan nama artis: ");
-                    getchar(); // Menghapus newline dari input sebelumnya
-                    fgets(artistName, sizeof(artistName), stdin);
-                    artistName[strcspn(artistName, "\n")] = 0; // Menghilangkan newline
-
-                    printf("Daftar Lagu dalam Tree untuk artis %s:\n", artistName);
-                    displaySongsByArtist(album, artistName); // album adalah pointer ke root tree
-                    getch(); // Tunggu input dari pengguna
-                }
                 else
                 {
                     printf("\nInvalid Choice\n");
@@ -224,15 +201,9 @@ int main()
         else if (pilih == '2')
         {
             int success = 0;
-            int maxSize;
             int num;
             int idlagu;
-
-            printf("Masukkan kapasitas maksimum daftar putar lagu: ");
-            scanf("%d", &maxSize);
-            getchar();
-
-            queue myQueue = createQueue(maxSize);
+            queue myQueue = createQueue();
 
             do
             {
@@ -360,9 +331,6 @@ int main()
         }
     } while (pilih != 'c');
 
-    // Menyimpan data lagu ke file
-    saveData(root, filename);
-
     return 0;
 }
 //================================================================
@@ -405,10 +373,6 @@ void tambahAwal(node **head)
         (*head)->left = pNew;
     }
     *head = pNew;
-    album = insertArtist(album, pNew->artis);
-    addSongToArtist(album, pNew->artis, pNew->id, pNew->judul, pNew->durasi, pNew->tahunRilis);
-
-    saveData(*head, "lagu_data.txt");
 }
 
 // Fungsi untuk menambahkan data di posisi tertentu dalam linked list
@@ -485,10 +449,6 @@ void tambahData(node **head)
             pNew->right->left = pNew;
         }
     }
-    album = insertArtist(album, pNew->artis);
-    addSongToArtist(album, pNew->artis, pNew->id, pNew->judul, pNew->durasi, pNew->tahunRilis);
-
-     *head = insertNode(*head, pNew);
 }
 
 // Fungsi untuk menambahkan data di akhir linked list
@@ -539,10 +499,6 @@ void tambahAkhir(node **head)
         pCur->right = pNew;
         pNew->left = pCur;
     }
-    album = insertArtist(album, pNew->artis);
-    addSongToArtist(album, pNew->artis, pNew->id, pNew->judul, pNew->durasi, pNew->tahunRilis);
-
-    *head = insertNode(*head, pNew);
 }
 
 // Fungsi untuk menghapus data di awal linked list
@@ -691,11 +647,10 @@ void tranverse(node *head)
 //==================================================================
 //===========================QUEUUE==================================
 // Fungsi untuk membuat queue
-queue createQueue(int maxSize)
+queue createQueue()
 {
     queue myQueue;
     myQueue.count = 0;
-    myQueue.maxSize = maxSize;
     myQueue.front = myQueue.rear = NULL;
     return myQueue;
 }
@@ -751,12 +706,6 @@ queueNode *findLaguById(node *head, int id)
 // Fungsi untuk menambahkan elemen ke dalam queue (enqueue)
 int enqueue(queueNode *lagu, queue *myQueue)
 {
-    if (myQueue->count >= myQueue->maxSize)
-    {
-        printf("Playlist penuh! Tidak bisa menambahkan lagu.\n");
-        return 0;
-    }
-
     if (myQueue->count == 0)
     {
         myQueue->front = myQueue->rear = lagu;
@@ -775,12 +724,6 @@ int enqueue(queueNode *lagu, queue *myQueue)
 // Fungsi untuk menghapus lagu dari queue (dequeue)
 void dequeue(queue *myQueue)
 {
-    if (myQueue->count == 0)
-    {
-        printf("Playlist kosong! Tidak ada lagu untuk dihapus.\n");
-        return;
-    }
-
     queueNode *temp = myQueue->front;
 
     push(&myStack, temp);
@@ -826,7 +769,7 @@ void destroy(queue *myQueue)
 //======================================================================
 //=============================STACK====================================
 // fungsi untuk membuat stack
-void createStack(int size)
+void createStack()
 {
     stack.top = NULL;
 }
@@ -879,13 +822,6 @@ void undoMultipleSongs(queue *q, Stack *myStack, int count)
         if (isEmpty(myStack))
         {
             printf("Hanya %d lagu yang berhasil di-undo.\n", undoneCount);
-            break;
-        }
-
-        // Cek apakah queue penuh
-        if (q->count >= q->maxSize)
-        {
-            printf("Queue penuh! Tidak dapat melakukan undo lagu.\n");
             break;
         }
 
@@ -1013,80 +949,3 @@ void playNextSong(nodeCircular *circularHead)
     } while (pCur != circularHead);
 }
 //======================================================================
-//=============================MANAJEMEN FILE===========================
-node *createNodeFile(int id, const char *judul, const char *artis, int durasi, int tahunRilis)
-{
-    node *newNode = (node *)malloc(sizeof(node)); // Alokasikan memori untuk node baru
-    newNode->id = id;
-    strcpy(newNode->judul, judul);
-    strcpy(newNode->artis, artis);
-    newNode->durasi = durasi;
-    newNode->tahunRilis = tahunRilis;
-    newNode->left = NULL;
-    newNode->right = NULL;
-    return newNode;
-}
-
-node *insertNode(node *root, node *newNode)
-{
-    if (root == NULL)
-    {
-        return newNode;
-    }
-
-    // Menentukan posisi di kiri atau kanan berdasarkan ID
-    if (newNode->id < root->id)
-    {
-        root->left = insertNode(root->left, newNode); // Masukkan ke kiri jika ID lebih kecil
-    }
-    else
-    {
-        root->right = insertNode(root->right, newNode); // Masukkan ke kanan jika ID lebih besar
-    }
-    return root;
-}
-
-node *loadData(const char *filename)
-{
-    FILE *file = fopen(filename, "r"); // Membuka file dengan mode "baca"
-    if (file == NULL)
-    {
-        printf("Error! Gagal membuka file untuk memuat.\n");
-        return NULL;
-    }
-
-    node *root = NULL;
-    int id, durasi, tahunRilis;
-    char judul[100], artis[100];
-
-    // Membaca setiap baris data lagu dari file
-    while (fscanf(file, "%d;%99[^;];%99[^;];%d;%d\n", &id, judul, artis, &durasi, &tahunRilis) != EOF)
-    {
-        node *newNode = createNodeFile(id, judul, artis, durasi, tahunRilis);
-        root = insertNode(root, newNode); // Menambahkannya ke dalam binary tree
-    }
-
-    fclose(file); // Menutup file setelah selesai
-    return root;
-}
-
-void saveData(node *root, const char *filename)
-{
-    FILE *file = fopen(filename, "w"); // Membuka file untuk menulis (mode "w" untuk menulis)
-    if (file == NULL)
-    {
-        printf("Error opening file for saving.\n");
-        return;
-    }
-
-    // Fungsi rekursif untuk traversal inorder dan menyimpan data ke file
-    if (root != NULL)
-    {
-        saveData(root->left, filename); // Traverse ke kiri
-        // Menulis data dari node ke file dengan format yang sama
-        fprintf(file, "%d;%s;%s;%d;%d\n", root->id, root->judul, root->artis, root->durasi, root->tahunRilis);
-        saveData(root->right, filename); // Traverse ke kanan
-    }
-
-    fclose(file); // Menutup file setelah selesai
-}
