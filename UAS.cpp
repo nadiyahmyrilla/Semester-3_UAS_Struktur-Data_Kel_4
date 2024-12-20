@@ -27,6 +27,8 @@ void totalData(node **head);
 void totalValue(node **head);
 bool cariData(node *head, int targetID);
 void tranverse(node *head);
+void loadDoubleLinkedList(node **head);
+void saveDoubleLinkedList(node *head);
 //==================================================================
 //===================QUEUE==========================================
 typedef struct queueNode
@@ -54,6 +56,9 @@ void dequeue(queue *myQueue);
 void display(queue myQueue);
 void destroy(queue *myQueue);
 void findMyLagu(queue *myQueue);
+void loadQueue(queue *myQueue);
+void saveQueue(queue *myQueue);
+int duplikasi(queue *myQueue, int id);
 //==================================================================
 //===================STACK==========================================
 typedef struct nodeStack
@@ -79,10 +84,11 @@ void destroyStack(Stack *myStack);
 void printStack(Stack *myStack);
 int stackCount(Stack *myStack);
 void undoMultipleSongs(queue *q, Stack *myStack, int count);
-
+void loadStack(Stack *myStack);
+void saveStack(Stack *myStack);
+int duplikasiStack(Stack *myStack, int id);
 //==================================================================
 //===================CIRCULAR LINKED LIST===========================
-/*Fungsi untuk membuat node baru*/
 struct nodeCircular
 {
     char judul[100];
@@ -105,7 +111,6 @@ int main()
 {
     node *head = NULL;
     char pilih;
-    int pilih1;
     nodeCircular *circularHead = NULL;
 
     head = NULL;
@@ -125,6 +130,7 @@ int main()
             head = NULL;
             do
             {
+                loadDoubleLinkedList(&head);
                 system("cls");
                 printf("---------MENU DAFTAR LAGU-----------------\n");
                 printf("1. Tambah lagu diawal\n");
@@ -136,58 +142,49 @@ int main()
                 printf("7. Total jumlah lagu\n");
                 printf("8. Mencari lagu didalam daftar\n");
                 printf("9. Cetak isi daftar lagu\n");
-                printf("10. Cetak album Artis\n");
-                printf("MASUKKAN PILIHAN (tekan 0 untuk logout) : ");
+                printf("MASUKKAN PILIHAN (tekan q untuk logout) : ");
                 fflush(stdin);
-                scanf("%d", &pilih1);
-                if (pilih1 == 1)
+                scanf("%c", &pilih);
+                if (pilih == '1')
                 {
                     tambahAwal(&head);
                     getch();
-                }
-                else if (pilih1 == 2)
+                } else if (pilih == '2')
                 {
                     tambahData(&head);
                     getch();
-                }
-                else if (pilih1 == 3)
+                } else if (pilih == '3')
                 {
                     tambahAkhir(&head);
                     getch();
-                }
-                else if (pilih1 == 4)
+                } else if (pilih == '4')
                 {
                     hapusAwal(&head);
                     getch();
-                }
-                else if (pilih1 == 5)
+                } else if (pilih == '5')
                 {
                     hapusData(&head);
                     getch();
-                }
-                else if (pilih1 == 6)
+                } else if (pilih == '6')
                 {
                     hapusAkhir(&head);
                     getch();
-                }
-                else if (pilih1 == 7)
+                } else if (pilih == '7')
                 {
                     totalData(&head);
                     getch();
-                }
-                else if (pilih1 == 8)
+                } else if (pilih == '8')
                 {
                     int targetID;
                     printf("\nMasukkan ID Lagu yang ingin dicari: ");
                     scanf("%d", &targetID);
-                    // karean boolean menggunakan ini untuk memanggil
-                    if (!cariData(head, targetID))
-                    {
+
+                    //karean boolean menggunakan ini untuk memanggil
+                    if (!cariData(head, targetID)) {
                         printf("Lagu dengan ID %d tidak ditemukan.\n", targetID);
                     }
                     getch();
-                }
-                else if (pilih1 == 9)
+                } else if (pilih == '9')
                 {
                     tranverse(head);
                     getch();
@@ -195,8 +192,13 @@ int main()
                 else
                 {
                     printf("\nInvalid Choice\n");
+                    getch();
                 }
-            } while (pilih1 != 0);
+            } while (pilih != 'q');
+            printf("Melakukan backup data dimuat:\n");
+            tranverse(head);
+            getch();
+            saveDoubleLinkedList(head);
         }
         else if (pilih == '2')
         {
@@ -207,6 +209,7 @@ int main()
 
             do
             {
+                loadQueue(&myQueue);
                 system("cls");
                 printf("\n-----MENU DAFTAR PUTAR-----");
                 printf("\n1. Menambah daftar putar lagu");
@@ -280,13 +283,23 @@ int main()
                     playNextSong(circularHead);
                     getch();
                 }
+                else
+                {
+                    printf("\nInvalid Choice\n");
+                    getch();
+                }
             } while (pilih != 'q');
+            printf("Melakukan backup data dimuat:\n");
+            display(myQueue);
+            getch();
+            saveQueue(&myQueue);
         }
         else if (pilih == '3')
         {
             head = NULL;
             do
             {
+                loadStack(&myStack);
                 system("cls");
                 printf("---------MENU UNDO LAGU-----------------\n");
                 printf("1. Undo Penghapusan Lagu\n");
@@ -299,7 +312,7 @@ int main()
                 if (pilih == '1')
                 {
                     int jumlahUndo;
-                    printf("Masukkan jumlah lagu yang ingin di-undo: ");
+                    printf("\nMasukkan jumlah lagu yang ingin di-undo: ");
                     scanf("%d", &jumlahUndo);
                     undoMultipleSongs(&myQueue, &myStack, jumlahUndo);
                     getch();
@@ -324,6 +337,10 @@ int main()
                     printf("\nInvalid Choice\n");
                 }
             } while (pilih != 'q');
+            printf("Melakukan backup data dimuat:\n");
+            printStack(&myStack);
+            getch();
+            saveStack(&myStack);
         }
         else
         {
@@ -331,10 +348,72 @@ int main()
         }
     } while (pilih != 'c');
 
+    //save data
+    saveDoubleLinkedList(head);
+    saveQueue(&myQueue);
+    saveStack(&myStack);
     return 0;
 }
 //================================================================
 //===================DOUBLE LINKED LIST=============================
+//save data
+void saveDoubleLinkedList(node *head) {
+    FILE *file = fopen("double_linked_list_data.txt", "w");
+    if (file == NULL) {
+        printf("\nError: Could not open file for saving data.\n");
+        return;
+    }
+
+    node *pCur = head;
+    while (pCur != NULL) {
+        fprintf(file, "%d\n", pCur->id);
+        fprintf(file, "%s\n", pCur->judul);
+        fprintf(file, "%s\n", pCur->artis);
+        fprintf(file, "%d\n", pCur->durasi);
+        fprintf(file, "%d\n", pCur->tahunRilis);
+        pCur = pCur->right;
+    }
+
+    fclose(file);
+    printf("\nData berhasil disimpan ke file double_linked_list_data.txt\n");
+}
+
+//load data yang dirun
+void loadDoubleLinkedList(node **head) {
+    FILE *file = fopen("double_linked_list_data.txt", "r");
+    if (file == NULL) {
+        printf("Error: Could not open file for loading data.\n");
+        return;
+    }
+
+    while (!feof(file)) {
+        node *pNew = (node *)malloc(sizeof(node));
+        
+        fscanf(file, "%d\n", &pNew->id);
+        fgets(pNew->judul, sizeof(pNew->judul), file);
+        pNew->judul[strcspn(pNew->judul, "\n")] = 0;
+        fgets(pNew->artis, sizeof(pNew->artis), file);
+        pNew->artis[strcspn(pNew->artis, "\n")] = 0;
+        fscanf(file, "%d\n", &pNew->durasi);
+        fscanf(file, "%d\n", &pNew->tahunRilis);
+
+        // Cek apakah ID sudah ada
+        if (!cariData(*head, pNew->id)) {
+            pNew->right = *head;
+            pNew->left = NULL;
+            if (*head != NULL) {
+                (*head)->left = pNew;
+            }
+            *head = pNew;
+        } else {
+            free(pNew);
+        }
+    }
+
+    fclose(file);
+    printf("\nData berhasil dimuat dari file double_linked_list_data.txt\n");
+}
+
 // Fungsi untuk menambahkan data di awal linked list
 void tambahAwal(node **head)
 {
@@ -346,7 +425,7 @@ void tambahAwal(node **head)
     // Cek apakah ID sudah ada menggunakan cariData
     if (cariData(*head, pNew->id))
     { // Perbaiki di sini
-        printf("ID Lagu sudah ada, tidak dapat menambah data.\n");
+        printf("\nID Lagu sudah ada, tidak dapat menambah data.\n");
         free(pNew); // Menghapus node yang sudah dialokasikan
         return;
     }
@@ -391,7 +470,7 @@ void tambahData(node **head)
     // Cek apakah ID sudah ada menggunakan cariData
     if (cariData(*head, pNew->id))
     {
-        printf("ID Lagu sudah ada, tidak dapat menambah data.\n");
+        printf("\nID Lagu sudah ada, tidak dapat menambah data.\n");
         free(pNew);
         return;
     }
@@ -463,7 +542,7 @@ void tambahAkhir(node **head)
     // Cek apakah ID sudah ada menggunakan cariData
     if (cariData(*head, pNew->id))
     {
-        printf("ID Lagu sudah ada, tidak dapat menambah data.\n");
+        printf("\nID Lagu sudah ada, tidak dapat menambah data.\n");
         free(pNew);
         return;
     }
@@ -508,7 +587,7 @@ void hapusAwal(node **head)
 
     if (*head == NULL)
     {
-        printf("Daftar lagu kosong.\n");
+        printf("\nDaftar lagu kosong.\n");
         return;
     }
     pCur = *head;
@@ -565,7 +644,7 @@ void hapusAkhir(node **head)
 
     if (*head == NULL)
     {
-        printf("Daftar lagu kosong.\n");
+        printf("\nDaftar lagu kosong.\n");
         return;
     }
     if (pCur->right == NULL)
@@ -630,7 +709,7 @@ void tranverse(node *head)
     node *pCur = head;
     if (pCur == NULL)
     {
-        printf("Daftar lagu kosong.\n");
+        printf("\nDaftar lagu kosong.\n");
     }
     else
     {
@@ -646,6 +725,71 @@ void tranverse(node *head)
 }
 //==================================================================
 //===========================QUEUUE==================================
+//save data
+void saveQueue(queue *myQueue) {
+    FILE *file = fopen("queue_data.txt", "w");
+    if (file == NULL) {
+        printf("\nError: Could not open file for saving queue data.\n");
+        return;
+    }
+
+    queueNode *pCur = myQueue->front;
+    while (pCur != NULL) {
+        fprintf(file, "%d\n", pCur->id);
+        fprintf(file, "%s\n", pCur->judul);
+        fprintf(file, "%s\n", pCur->artis);
+        fprintf(file, "%d\n", pCur->durasi);
+        fprintf(file, "%d\n", pCur->tahunRilis);
+        pCur = pCur->next;
+    }
+
+    fclose(file);
+    printf("\nData queue berhasil disimpan ke file queue_data.txt\n");
+}
+
+//load data
+void loadQueue(queue *myQueue) {
+    FILE *file = fopen("queue_data.txt", "r");
+    if (file == NULL) {
+        printf("\nError: Could not open file for loading queue data.\n");
+        return;
+    }
+
+    while (!feof(file)) {
+        queueNode *newNode = (queueNode *)malloc(sizeof(queueNode));
+        
+        fscanf(file, "%d\n", &newNode->id);
+        fgets(newNode->judul, sizeof(newNode->judul), file);
+        newNode->judul[strcspn(newNode->judul, "\n")] = 0;
+        fgets(newNode->artis, sizeof(newNode->artis), file);
+        newNode->artis[strcspn(newNode->artis, "\n")] = 0;
+        fscanf(file, "%d\n", &newNode->durasi);
+        fscanf(file, "%d\n", &newNode->tahunRilis);
+        newNode->next = NULL;
+        
+        if (!duplikasi(myQueue, newNode->id)) {
+            enqueue(newNode, myQueue);
+        } else {
+            free(newNode);
+        }
+    }
+
+    fclose(file);
+    printf("\nData queue berhasil dimuat dari file queue_data.txt\n");
+}
+
+// Fungsi untuk memeriksa apakah ada lagu dengan ID yang sama di queue
+int duplikasi(queue *myQueue, int id) {
+    queueNode *pCur = myQueue->front;
+    while (pCur != NULL) {
+        if (pCur->id == id) {
+            return 1;
+        }
+        pCur = pCur->next;
+    }
+    return 0;
+}
+
 // Fungsi untuk membuat queue
 queue createQueue()
 {
@@ -743,7 +887,7 @@ void display(queue myQueue)
 {
     if (myQueue.count == 0)
     {
-        printf("Daftar putar lagu kosong.\n");
+        printf("\nDaftar putar lagu kosong.\n");
         return;
     }
     printf("-----------------------------------------------------------------------------------------------------\n");
@@ -768,6 +912,73 @@ void destroy(queue *myQueue)
 }
 //======================================================================
 //=============================STACK====================================
+//save data
+void saveStack(Stack *myStack) {
+    FILE *file = fopen("stack_data.txt", "w");
+    if (file == NULL) {
+        printf("\nError: Could not open file for saving stack data.\n");
+        return;
+    }
+
+    nodeStack *current = myStack->top;
+    while (current != NULL) {
+        fprintf(file, "%d\n", current->song->id);
+        fprintf(file, "%s\n", current->song->judul);
+        fprintf(file, "%s\n", current->song->artis);
+        fprintf(file, "%d\n", current->song->durasi);
+        fprintf(file, "%d\n", current->song->tahunRilis);
+        current = current->next;
+    }
+
+    fclose(file);
+    printf("\nData stack berhasil disimpan ke file stack_data.txt\n");
+}
+
+//load data
+void loadStack(Stack *myStack) {
+    FILE *file = fopen("stack_data.txt", "r");
+    if (file == NULL) {
+        printf("\nError: Could not open file for loading stack data.\n");
+        return;
+    }
+    while (!feof(file)) {
+        queueNode *newSong = (queueNode *)malloc(sizeof(queueNode));
+        if (newSong == NULL) {
+            printf("\nMemory allocation failed.\n");
+            fclose(file);
+            return;
+        }
+        fscanf(file, "%d\n", &newSong->id);
+        fgets(newSong->judul, sizeof(newSong->judul), file);
+        newSong->judul[strcspn(newSong->judul, "\n")] = 0;
+        fgets(newSong->artis, sizeof(newSong->artis), file);
+        newSong->artis[strcspn(newSong->artis, "\n")] = 0;
+        fscanf(file, "%d\n", &newSong->durasi);
+        fscanf(file, "%d\n", &newSong->tahunRilis);
+
+        if (!duplikasiStack(myStack, newSong->id)) {
+            push(myStack, newSong);
+        } else {
+            free(newSong);
+        }
+    }
+
+    fclose(file);
+    printf("\nData stack berhasil dimuat dari file stack_data.txt\n");
+}
+
+// Fungsi untuk memeriksa apakah ada lagu dengan ID yang sama di stack
+int duplikasiStack(Stack *myStack, int id) {
+    nodeStack *pCur = myStack->top;
+    while (pCur != NULL) {
+        if (pCur->song->id == id) {
+            return 1;
+        }
+        pCur = pCur->next;
+    }
+    return 0;
+}
+
 // fungsi untuk membuat stack
 void createStack()
 {
@@ -784,14 +995,14 @@ void push(Stack *myStack, queueNode *newSong)
     nodeStack *newNode = (nodeStack *)malloc(sizeof(nodeStack));
     if (newNode == NULL)
     {
-        printf("Gagal mengalokasikan memori untuk node stack!\n");
+        printf("\nGagal mengalokasikan memori untuk node stack!\n");
         return;
     }
 
     newNode->song = (queueNode *)malloc(sizeof(queueNode));
     if (newNode->song == NULL)
     {
-        printf("Gagal mengalokasikan memori untuk lagu!\n");
+        printf("\nGagal mengalokasikan memori untuk lagu!\n");
         free(newNode);
         return;
     }
@@ -821,7 +1032,7 @@ void undoMultipleSongs(queue *q, Stack *myStack, int count)
     {
         if (isEmpty(myStack))
         {
-            printf("Hanya %d lagu yang berhasil di-undo.\n", undoneCount);
+            printf("\nHanya %d lagu yang berhasil di-undo.\n", undoneCount);
             break;
         }
 
@@ -864,7 +1075,7 @@ void printStack(Stack *myStack)
 {
     if (isEmpty(myStack))
     {
-        printf("Stack kosong! Tidak ada riwayat penghapusan lagu.\n");
+        printf("\nStack kosong! Tidak ada riwayat penghapusan lagu.\n");
         return;
     }
 
@@ -903,7 +1114,7 @@ void enqueueFromQueue(queue *myQueue, nodeCircular **circularHead)
 {
     if (myQueue->count == 0)
     {
-        printf("Queue kosong! Tidak ada lagu untuk dipindahkan.\n");
+        printf("\nQueue kosong! Tidak ada lagu untuk dipindahkan.\n");
         return;
     }
     // Mengambil node dari queue
@@ -929,19 +1140,19 @@ void enqueueFromQueue(queue *myQueue, nodeCircular **circularHead)
         newNode->next = *circularHead;
     }
 
-    printf("Lagu '%s' berhasil ditambahkan ke daftar putar circular.\n", newNode->judul);
+    printf("\nLagu '%s' berhasil ditambahkan ke daftar putar circular.\n", newNode->judul);
 }
 
 void playNextSong(nodeCircular *circularHead)
 {
     if (circularHead == NULL)
     {
-        printf("Daftar putar circular kosong.\n");
+        printf("\nDaftar putar circular kosong.\n");
         return;
     }
 
     nodeCircular *pCur = circularHead;
-    printf("Lagu yang akan diputar selanjutnya:\n");
+    printf("\nLagu yang akan diputar selanjutnya:\n");
     do
     {
         printf("Judul: %s\n Artis: %s\n %d detik\n", pCur->judul, pCur->artis, pCur->durasi);
