@@ -4,6 +4,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+#include <windows.h>
 
 //===================DOUBLE LINKED LIST=============================
 struct node
@@ -104,7 +105,7 @@ typedef struct nodeCircular nodeCircular;
 nodeCircular *createNode(char *judul, char *artis, int durasi, int id);
 void enqueueFromQueue(queue *myQueue, nodeCircular **circularHead);
 void playNextSong(nodeCircular *circularHead);
-void printMusicBox1(nodeCircular *pCur);
+void MusicBox1(nodeCircular *pCur);
 void printMusicBox2(nodeCircular *pCur);
 //==================================================================
 //========================GLOBAL VARIABLE===========================
@@ -1179,39 +1180,33 @@ void printMusicBox1(nodeCircular *pCur) {
     printf("--------------------------------------------------\n");
     printf("|                 Kotak Lagu Spotify             |\n");
     printf("--------------------------------------------------\n");
-    printf("| Judul:%-20s                               |\n", pCur->judul);
-    printf("| Artis:%-20s                               |\n", pCur->artis);
-    printf("| Durasi:%-20d                              |\n", pCur->durasi);
+    printf("| Judul:%-20s                |\n", pCur->judul);
+    printf("| Artis:%-20s                |\n", pCur->artis);
+    printf("| Durasi:%-20d               |\n", pCur->durasi);
     printf("--------------------------------------------------\n");
     printf("| Prev  [1]                             [2] Next |\n");
     printf("--------------------------------------------------\n");
     pCur = pCur->next;
 }
-void printMusicBox2(nodeCircular *pCur) {
+void MusicBox2(nodeCircular *pCur) {
     // Menampilkan kotak lagu dengan garis
     printf("--------------------------------------------------\n");
     printf("|                 Kotak Lagu Spotify             |\n");
     printf("--------------------------------------------------\n");
-    printf("| Judul:%-20s                               |\n", pCur->judul);
-    printf("| Artis:%-20s                               |\n", pCur->artis);
-    printf("| Durasi:%-20d                              |\n", pCur->durasi);
+    printf("| Judul:%-20s                 |\n", pCur->judul);
+    printf("| Artis:%-20s                 |\n", pCur->artis);
+    printf("| Durasi:%-20d                |\n", pCur->durasi);
     printf("--------------------------------------------------\n");
     printf("|                                       [2] Next |\n");
     printf("--------------------------------------------------\n");
     pCur = pCur->next;
 }
 
-//untuk pengaturan waktu
-void sleep_sec(long seconds) {
-    struct timespec ts;
-    ts.tv_sec = seconds;
-    ts.tv_nsec = 0;
-    nanosleep(&ts, NULL);
-}
-
 //untuk play lagu
-void playNextSong(nodeCircular *circularHead, char input)
+void playNextSong(nodeCircular *circularHead)
 {
+    char input;
+    int start_time;
     if (circularHead == NULL)
     {
         printf("\nDaftar putar circular kosong.\n");
@@ -1223,20 +1218,31 @@ void playNextSong(nodeCircular *circularHead, char input)
     {
         system("cls");
         if (pCur == circularHead) {
-            printMusicBox2;
+            MusicBox2(pCur);
             printf("\ninputkan 2(next)/0(berhenti):");
-            sleep_sec(5); //detik
+            int start_time = time (NULL);
+                while (!kbhit() && (time(NULL) - start_time < 5000)) {
+            }
         } else {
-            printMusicBox1;
+            printMusicBox1(pCur);
             printf("\ninputkan 1(prev)/2(next)/(0 berhenti):");
-            sleep_sec(5);
+            int start_time = time(NULL);
+                while (!kbhit() && (time(NULL) - start_time < 5000)) {
+            }
         }
-        scanf(" %c", &input);
+        if (kbhit()) {
+            input = getch();
+        } else {
+            input = -1;
+        }
         if (input == '2') {
             pCur = pCur->next;
-        } else {
-
+        } else if (input == '0') {
+            printf("Berhenti memutar lagu.\n");
+            break;
+        } else if (input == -1) {
+            pCur = pCur->next;
         }
-    } while (pCur != circularHead && input != '0');
+    } while (pCur != circularHead);
 }
 //======================================================================
