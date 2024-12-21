@@ -29,6 +29,7 @@ bool cariData(node *head, int targetID);
 void tranverse(node *head);
 void loadDoubleLinkedList(node **head);
 void saveDoubleLinkedList(node *head);
+int duplikasiDoubleLinkedList(node *head, int id);
 //==================================================================
 //===================QUEUE==========================================
 typedef struct queueNode
@@ -130,7 +131,6 @@ int main()
             head = NULL;
             do
             {
-                loadDoubleLinkedList(&head);
                 system("cls");
                 printf("---------MENU DAFTAR LAGU-----------------\n");
                 printf("1. Tambah lagu diawal\n");
@@ -147,27 +147,33 @@ int main()
                 scanf("%c", &pilih);
                 if (pilih == '1')
                 {
+                    loadDoubleLinkedList(&head);
                     tambahAwal(&head);
                     getch();
                 } else if (pilih == '2')
                 {
+                    loadDoubleLinkedList(&head);
                     tambahData(&head);
                     getch();
                 } else if (pilih == '3')
                 {
+                    loadDoubleLinkedList(&head);
                     tambahAkhir(&head);
                     getch();
                 } else if (pilih == '4')
                 {
                     hapusAwal(&head);
+                    saveDoubleLinkedList(head);
                     getch();
                 } else if (pilih == '5')
                 {
                     hapusData(&head);
+                    saveDoubleLinkedList(head);
                     getch();
                 } else if (pilih == '6')
                 {
                     hapusAkhir(&head);
+                    saveDoubleLinkedList(head);
                     getch();
                 } else if (pilih == '7')
                 {
@@ -186,19 +192,19 @@ int main()
                     getch();
                 } else if (pilih == '9')
                 {
+                    loadDoubleLinkedList(&head);
                     tranverse(head);
                     getch();
                 }
                 else
                 {
-                    printf("\nInvalid Choice\n");
+                    printf("\nInvalid Choice");
                     getch();
                 }
             } while (pilih != 'q');
             printf("Melakukan backup data dimuat:\n");
             tranverse(head);
             getch();
-            saveDoubleLinkedList(head);
         }
         else if (pilih == '2')
         {
@@ -209,7 +215,6 @@ int main()
 
             do
             {
-                loadQueue(&myQueue);
                 system("cls");
                 printf("\n-----MENU DAFTAR PUTAR-----");
                 printf("\n1. Menambah daftar putar lagu");
@@ -222,6 +227,7 @@ int main()
                 scanf(" %c", &pilih);
                 if (pilih == '1')
                 {
+                    loadQueue(&myQueue);
                     printf("\nMasukkan ID Lagu yang ingin ditambahkan: ");
                     if (scanf("%d", &idlagu) != 1)
                     {
@@ -249,19 +255,23 @@ int main()
                 }
                 else if (pilih == '2')
                 {
-                    if (myQueue.front != NULL)
+                   if (myQueue.front != NULL)
                     {
                         dequeue(&myQueue);
+                        printf("\nLagu berhasil dihapus dari playlist.\n");
+                        printf("*Sihlahkan ke menu undo jika salah menghapus lagu. ");
+                        saveQueue(&myQueue);
+                        getch();
                     }
                     else
                     {
-                        printf("\nLagu berhasil dihapus dari playlist.\n");
-                        printf("*Sihlahkan ke menu undo jika salah menghapus lagu.");
+                        printf("\nPlaylist kosong.\n");
+                        getch();
                     }
-                    getch();
                 }
                 else if (pilih == '3')
                 {
+                    loadQueue(&myQueue);
                     display(myQueue);
                     getch();
                 }
@@ -270,7 +280,8 @@ int main()
                     destroy(&myQueue);
                     circularHead = NULL;
                     printf("\nSeluruh daftar putar lagu berhasil dihapus.\n");
-                    printf("*Sihlahkan ke menu undo jika salah menghapus lagu.");
+                    printf("*Sihlahkan ke menu undo jika salah menghapus lagu. ");
+                    saveQueue(&myQueue);
                     getch();
                 }
                 else if (pilih == '5')
@@ -292,14 +303,12 @@ int main()
             printf("Melakukan backup data dimuat:\n");
             display(myQueue);
             getch();
-            saveQueue(&myQueue);
         }
         else if (pilih == '3')
         {
             head = NULL;
             do
             {
-                loadStack(&myStack);
                 system("cls");
                 printf("---------MENU UNDO LAGU-----------------\n");
                 printf("1. Undo Penghapusan Lagu\n");
@@ -314,11 +323,14 @@ int main()
                     int jumlahUndo;
                     printf("\nMasukkan jumlah lagu yang ingin di-undo: ");
                     scanf("%d", &jumlahUndo);
+                    loadStack(&myStack);
                     undoMultipleSongs(&myQueue, &myStack, jumlahUndo);
+                    saveStack(&myStack);
                     getch();
                 }
                 else if (pilih == '2')
                 {
+                    loadStack(&myStack);
                     printStack(&myStack);
                     getch();
                 }
@@ -330,6 +342,7 @@ int main()
                 else if (pilih == '4')
                 {
                     destroyStack(&myStack);
+                    saveStack(&myStack);
                     getch();
                 }
                 else
@@ -340,18 +353,12 @@ int main()
             printf("Melakukan backup data dimuat:\n");
             printStack(&myStack);
             getch();
-            saveStack(&myStack);
         }
         else
         {
             continue;
         }
     } while (pilih != 'c');
-
-    //save data
-    saveDoubleLinkedList(head);
-    saveQueue(&myQueue);
-    saveStack(&myStack);
     return 0;
 }
 //================================================================
@@ -375,7 +382,7 @@ void saveDoubleLinkedList(node *head) {
     }
 
     fclose(file);
-    printf("\nData berhasil disimpan ke file double_linked_list_data.txt\n");
+    printf(", data berhasil disimpan.\n");
 }
 
 //load data yang dirun
@@ -398,7 +405,7 @@ void loadDoubleLinkedList(node **head) {
         fscanf(file, "%d\n", &pNew->tahunRilis);
 
         // Cek apakah ID sudah ada
-        if (!cariData(*head, pNew->id)) {
+        if (!duplikasiDoubleLinkedList(*head, pNew->id)) {
             pNew->right = *head;
             pNew->left = NULL;
             if (*head != NULL) {
@@ -411,7 +418,18 @@ void loadDoubleLinkedList(node **head) {
     }
 
     fclose(file);
-    printf("\nData berhasil dimuat dari file double_linked_list_data.txt\n");
+}
+
+//cek duplikasi save data
+int duplikasiDoubleLinkedList(node *head, int id) {
+    node *pCur = head;
+    while (pCur != NULL) {
+        if (pCur->id == id) {
+            return 1;
+        }
+        pCur = pCur->right;
+    }
+    return 0;
 }
 
 // Fungsi untuk menambahkan data di awal linked list
@@ -598,7 +616,7 @@ void hapusAwal(node **head)
     }
 
     free(pCur);
-    printf("\nData lagu di awal berhasil dihapus.\n");
+    printf("\nData lagu di awal berhasil dihapus");
 }
 
 // Fungsi untuk menghapus data di posisi tertentu dalam linked list
@@ -634,7 +652,7 @@ void hapusData(node **head)
     }
 
     free(pCur);
-    printf("Data lagu di posisi %d berhasil dihapus.\n", pos);
+    printf("Data lagu di posisi %d berhasil dihapus", pos);
 }
 
 // Fungsi untuk menghapus data di akhir linked list
@@ -662,7 +680,7 @@ void hapusAkhir(node **head)
         free(pCur);
     }
 
-    printf("\nData di akhir berhasil dihapus.\n");
+    printf("\nData di akhir berhasil dihapus");
 }
 
 // Fungsi untuk menghitung total data di linked list
@@ -744,7 +762,7 @@ void saveQueue(queue *myQueue) {
     }
 
     fclose(file);
-    printf("\nData queue berhasil disimpan ke file queue_data.txt\n");
+    printf(", data berhasil disimpan.\n");
 }
 
 //load data
@@ -775,7 +793,6 @@ void loadQueue(queue *myQueue) {
     }
 
     fclose(file);
-    printf("\nData queue berhasil dimuat dari file queue_data.txt\n");
 }
 
 // Fungsi untuk memeriksa apakah ada lagu dengan ID yang sama di queue
@@ -931,7 +948,7 @@ void saveStack(Stack *myStack) {
     }
 
     fclose(file);
-    printf("\nData stack berhasil disimpan ke file stack_data.txt\n");
+    printf(", data berhasil disimpan.\n");
 }
 
 //load data
@@ -964,7 +981,6 @@ void loadStack(Stack *myStack) {
     }
 
     fclose(file);
-    printf("\nData stack berhasil dimuat dari file stack_data.txt\n");
 }
 
 // Fungsi untuk memeriksa apakah ada lagu dengan ID yang sama di stack
@@ -1043,7 +1059,7 @@ void undoMultipleSongs(queue *q, Stack *myStack, int count)
             undoneCount++;
         }
     }
-    printf("%d lagu berhasil di-undo dan dikembalikan ke playlist.\n", undoneCount);
+    printf("%d lagu berhasil di-undo dan dikembalikan ke playlist", undoneCount);
 }
 
 // Menghitung jumlah lagu yang ada di stack
@@ -1067,7 +1083,7 @@ void destroyStack(Stack *myStack)
     {
         pop(myStack); // Pop setiap elemen hingga stack kosong
     }
-    printf("\nSemua riwayat penghapusan lagu telah dihapus.\n");
+    printf("\nSemua riwayat penghapusan lagu telah dihapus");
 }
 
 // Menampilkan seluruh lagu yang dihapus di stack
