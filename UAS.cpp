@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 
 //===================DOUBLE LINKED LIST=============================
 struct node
@@ -92,6 +93,7 @@ int duplikasiStack(Stack *myStack, int id);
 //===================CIRCULAR LINKED LIST===========================
 struct nodeCircular
 {
+    int id;
     char judul[100];
     char artis[100];
     int durasi;
@@ -99,9 +101,11 @@ struct nodeCircular
 };
 typedef struct nodeCircular nodeCircular;
 
-nodeCircular *createNode(char *judul, char *artis, int durasi);
+nodeCircular *createNode(char *judul, char *artis, int durasi, int id);
 void enqueueFromQueue(queue *myQueue, nodeCircular **circularHead);
 void playNextSong(nodeCircular *circularHead);
+void printMusicBox1(nodeCircular *pCur);
+void printMusicBox2(nodeCircular *pCur);
 //==================================================================
 //========================GLOBAL VARIABLE===========================
 queue myQueue;
@@ -150,36 +154,46 @@ int main()
                     loadDoubleLinkedList(&head);
                     tambahAwal(&head);
                     getch();
-                } else if (pilih == '2')
+                    saveDoubleLinkedList(head);
+                } 
+                else if (pilih == '2')
                 {
                     loadDoubleLinkedList(&head);
                     tambahData(&head);
                     getch();
-                } else if (pilih == '3')
+                    saveDoubleLinkedList(head);
+                } 
+                else if (pilih == '3')
                 {
                     loadDoubleLinkedList(&head);
                     tambahAkhir(&head);
                     getch();
-                } else if (pilih == '4')
+                    saveDoubleLinkedList(head);
+                } 
+                else if (pilih == '4')
                 {
                     hapusAwal(&head);
                     saveDoubleLinkedList(head);
                     getch();
-                } else if (pilih == '5')
+                } 
+                else if (pilih == '5')
                 {
                     hapusData(&head);
                     saveDoubleLinkedList(head);
                     getch();
-                } else if (pilih == '6')
+                } 
+                else if (pilih == '6')
                 {
                     hapusAkhir(&head);
                     saveDoubleLinkedList(head);
                     getch();
-                } else if (pilih == '7')
+                } 
+                else if (pilih == '7')
                 {
                     totalData(&head);
                     getch();
-                } else if (pilih == '8')
+                } 
+                else if (pilih == '8')
                 {
                     int targetID;
                     printf("\nMasukkan ID Lagu yang ingin dicari: ");
@@ -190,9 +204,9 @@ int main()
                         printf("Lagu dengan ID %d tidak ditemukan.\n", targetID);
                     }
                     getch();
-                } else if (pilih == '9')
+                } 
+                else if (pilih == '9')
                 {
-                    loadDoubleLinkedList(&head);
                     tranverse(head);
                     getch();
                 }
@@ -202,9 +216,10 @@ int main()
                     getch();
                 }
             } while (pilih != 'q');
-            printf("Melakukan backup data dimuat:\n");
+            printf("\nMelakukan backup data dimuat:\n");
             tranverse(head);
             getch();
+            saveDoubleLinkedList(head);
         }
         else if (pilih == '2')
         {
@@ -227,7 +242,6 @@ int main()
                 scanf(" %c", &pilih);
                 if (pilih == '1')
                 {
-                    loadQueue(&myQueue);
                     printf("\nMasukkan ID Lagu yang ingin ditambahkan: ");
                     if (scanf("%d", &idlagu) != 1)
                     {
@@ -245,6 +259,7 @@ int main()
                         if (enqueue(lagu, &myQueue))
                         {
                             enqueueFromQueue(&myQueue, &circularHead);
+                            loadQueue(&myQueue);
                         }
                         else
                         {
@@ -259,7 +274,7 @@ int main()
                     {
                         dequeue(&myQueue);
                         printf("\nLagu berhasil dihapus dari playlist.\n");
-                        printf("*Sihlahkan ke menu undo jika salah menghapus lagu. ");
+                        printf("*Sihlahkan ke menu undo jika salah menghapus lagu");
                         saveQueue(&myQueue);
                         getch();
                     }
@@ -280,7 +295,7 @@ int main()
                     destroy(&myQueue);
                     circularHead = NULL;
                     printf("\nSeluruh daftar putar lagu berhasil dihapus.\n");
-                    printf("*Sihlahkan ke menu undo jika salah menghapus lagu. ");
+                    printf("*Sihlahkan ke menu undo jika salah menghapus lagu");
                     saveQueue(&myQueue);
                     getch();
                 }
@@ -336,11 +351,13 @@ int main()
                 }
                 else if (pilih == '3')
                 {
+                    loadStack(&myStack);
                     stackCount(&myStack);
                     getch();
                 }
                 else if (pilih == '4')
                 {
+                    loadStack(&myStack);
                     destroyStack(&myStack);
                     saveStack(&myStack);
                     getch();
@@ -605,7 +622,7 @@ void hapusAwal(node **head)
 
     if (*head == NULL)
     {
-        printf("\nDaftar lagu kosong.\n");
+        printf("\nDaftar lagu kosong");
         return;
     }
     pCur = *head;
@@ -642,7 +659,7 @@ void hapusData(node **head)
     }
     if (pCur == NULL)
     {
-        printf("Posisi tidak ditemukan.\n");
+        printf("Posisi tidak ditemukan");
         return;
     }
     pPrev->right = pCur->right;
@@ -662,7 +679,7 @@ void hapusAkhir(node **head)
 
     if (*head == NULL)
     {
-        printf("\nDaftar lagu kosong.\n");
+        printf("\nDaftar lagu kosong.");
         return;
     }
     if (pCur->right == NULL)
@@ -1115,9 +1132,10 @@ void printStack(Stack *myStack)
 //======================================================================
 //=============================CIRCULAR LINKED LIST=====================
 // Membuat node baru bernama lagu yang berisi informasi lagu
-nodeCircular *createNode(char *judul, char *artis, int durasi)
+nodeCircular *createNode(char *judul, char *artis, int durasi, int id)
 {
     nodeCircular *newNode = (nodeCircular *)malloc(sizeof(nodeCircular));
+    newNode->id = id;
     strcpy(newNode->judul, judul);
     strcpy(newNode->artis, artis);
     newNode->durasi = durasi;
@@ -1130,14 +1148,12 @@ void enqueueFromQueue(queue *myQueue, nodeCircular **circularHead)
 {
     if (myQueue->count == 0)
     {
-        printf("\nQueue kosong! Tidak ada lagu untuk dipindahkan.\n");
+        printf("\nQueue kosong! Tidak ada lagu untuk dipindahkan");
         return;
     }
-    // Mengambil node dari queue
-    queueNode *queueNode = myQueue->front;
 
-    // Membuat nodeCircular baru
-    nodeCircular *newNode = createNode(queueNode->judul, queueNode->artis, queueNode->durasi);
+    queueNode *queueNode = myQueue->front;
+    nodeCircular *newNode = createNode(queueNode->judul, queueNode->artis, queueNode->durasi, queueNode->id);
 
     // Jika circular list kosong
     if (*circularHead == NULL)
@@ -1156,10 +1172,47 @@ void enqueueFromQueue(queue *myQueue, nodeCircular **circularHead)
         newNode->next = *circularHead;
     }
 
-    printf("\nLagu '%s' berhasil ditambahkan ke daftar putar circular.\n", newNode->judul);
+    printf("Lagu dengan ID %d siap untuk diputar.\n", newNode->id);
 }
 
-void playNextSong(nodeCircular *circularHead)
+//print kotak lagu
+void printMusicBox1(nodeCircular *pCur) {
+    // Menampilkan kotak lagu dengan garis
+    printf("--------------------------------------------------\n");
+    printf("|                 Kotak Lagu Spotify             |\n");
+    printf("--------------------------------------------------\n");
+    printf("| Judul:%-20s                               |\n", pCur->judul);
+    printf("| Artis:%-20s                               |\n", pCur->artis);
+    printf("| Durasi:%-20d                              |\n", pCur->durasi);
+    printf("--------------------------------------------------\n");
+    printf("| Prev  [1]                             [2] Next |\n");
+    printf("--------------------------------------------------\n");
+    pCur = pCur->next;
+}
+void printMusicBox2(nodeCircular *pCur) {
+    // Menampilkan kotak lagu dengan garis
+    printf("--------------------------------------------------\n");
+    printf("|                 Kotak Lagu Spotify             |\n");
+    printf("--------------------------------------------------\n");
+    printf("| Judul:%-20s                               |\n", pCur->judul);
+    printf("| Artis:%-20s                               |\n", pCur->artis);
+    printf("| Durasi:%-20d                              |\n", pCur->durasi);
+    printf("--------------------------------------------------\n");
+    printf("|                                       [2] Next |\n");
+    printf("--------------------------------------------------\n");
+    pCur = pCur->next;
+}
+
+//untuk pengaturan waktu
+void sleep_sec(long seconds) {
+    struct timespec ts;
+    ts.tv_sec = seconds;
+    ts.tv_nsec = 0;
+    nanosleep(&ts, NULL);
+}
+
+//untuk play lagu
+void playNextSong(nodeCircular *circularHead, char input)
 {
     if (circularHead == NULL)
     {
@@ -1168,11 +1221,24 @@ void playNextSong(nodeCircular *circularHead)
     }
 
     nodeCircular *pCur = circularHead;
-    printf("\nLagu yang akan diputar selanjutnya:\n");
     do
     {
-        printf("Judul: %s\n Artis: %s\n %d detik\n", pCur->judul, pCur->artis, pCur->durasi);
-        pCur = pCur->next;
-    } while (pCur != circularHead);
+        system("cls");
+        if (pCur == circularHead) {
+            printMusicBox2;
+            printf("\ninputkan 2(next)/0(berhenti):");
+            sleep_sec(5); //detik
+        } else {
+            printMusicBox1;
+            printf("\ninputkan 1(prev)/2(next)/(0 berhenti):");
+            sleep_sec(5);
+        }
+        scanf(" %c", &input);
+        if (input == '2') {
+            pCur = pCur->next;
+        } else {
+
+        }
+    } while (pCur != circularHead && input != '0');
 }
 //======================================================================
