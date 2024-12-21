@@ -286,7 +286,6 @@ int main()
                 }
                 else if (pilih == '3')
                 {
-                    loadQueue(&myQueue);
                     display(myQueue);
                     getch();
                 }
@@ -318,6 +317,7 @@ int main()
             printf("Melakukan backup data dimuat:\n");
             display(myQueue);
             getch();
+            saveQueue(&myQueue);
         }
         else if (pilih == '3')
         {
@@ -338,26 +338,23 @@ int main()
                     int jumlahUndo;
                     printf("\nMasukkan jumlah lagu yang ingin di-undo: ");
                     scanf("%d", &jumlahUndo);
-                    loadStack(&myStack);
                     undoMultipleSongs(&myQueue, &myStack, jumlahUndo);
+                    loadStack(&myStack);
                     saveStack(&myStack);
                     getch();
                 }
                 else if (pilih == '2')
                 {
-                    loadStack(&myStack);
                     printStack(&myStack);
                     getch();
                 }
                 else if (pilih == '3')
                 {
-                    loadStack(&myStack);
                     stackCount(&myStack);
                     getch();
                 }
                 else if (pilih == '4')
                 {
-                    loadStack(&myStack);
                     destroyStack(&myStack);
                     saveStack(&myStack);
                     getch();
@@ -370,6 +367,7 @@ int main()
             printf("Melakukan backup data dimuat:\n");
             printStack(&myStack);
             getch();
+            saveStack(&myStack);
         }
         else
         {
@@ -410,33 +408,19 @@ void loadDoubleLinkedList(node **head) {
         return;
     }
 
-    while (true) {
+    while (!feof(file)) {
         node *pNew = (node *)malloc(sizeof(node));
-        if (pNew == NULL) {
-            printf("Error: Memory allocation failed.\n");
-            break;
-        }
-        // Validasi pembacaan ID
-        if (fscanf(file, "%d\n", &pNew->id) != 1) {
-            free(pNew);
-            break; 
-        }
-
-        // Validasi pembacaan judul dan artis
-        if (fgets(pNew->judul, sizeof(pNew->judul), file) == NULL ||
-            fgets(pNew->artis, sizeof(pNew->artis), file) == NULL) {
-            free(pNew);
-            break;
-        }
+        
+        fscanf(file, "%d\n", &pNew->id);
+        fgets(pNew->judul, sizeof(pNew->judul), file);
         pNew->judul[strcspn(pNew->judul, "\n")] = 0;
+        fgets(pNew->artis, sizeof(pNew->artis), file);
         pNew->artis[strcspn(pNew->artis, "\n")] = 0;
-        // Validasi pembacaan durasi dan tahun rilis
-        if (fscanf(file, "%d\n", &pNew->durasi) != 1 || fscanf(file, "%d\n", &pNew->tahunRilis) != 1) {
-            free(pNew);
-            break;
-        }
-        // Cek duplikasi ID sebelum menambahkan node ke linked list
-        if (!cariData(*head, pNew->id)) {
+        fscanf(file, "%d\n", &pNew->durasi);
+        fscanf(file, "%d\n", &pNew->tahunRilis);
+
+        // Cek apakah ID sudah ada
+        if (!duplikasiDoubleLinkedList(*head, pNew->id)) {
             pNew->right = *head;
             pNew->left = NULL;
             if (*head != NULL) {
@@ -444,16 +428,12 @@ void loadDoubleLinkedList(node **head) {
             }
             *head = pNew;
         } else {
-            printf("Warning: Duplicate ID %d found. Skipping this entry.\n", pNew->id);
             free(pNew);
         }
     }
 
     fclose(file);
-    printf("\nData berhasil dimuat dari file double_linked_list_data.txt\n");
 }
-
-
 
 //cek duplikasi save data
 int duplikasiDoubleLinkedList(node *head, int id) {
@@ -808,49 +788,27 @@ void loadQueue(queue *myQueue) {
         return;
     }
 
-    while (true) {
+    while (!feof(file)) {
         queueNode *newNode = (queueNode *)malloc(sizeof(queueNode));
-        if (newNode == NULL) {
-            printf("\nError: Memory allocation failed.\n");
-            break; 
-        }
-        // Validasi pembacaan ID
-        if (fscanf(file, "%d\n", &newNode->id) != 1) {
-            printf("\nError: Failed to read ID. Stopping load process.\n");
-            free(newNode);
-            break;
-        }
-        // Validasi pembacaan judul dan artis
-        if (fgets(newNode->judul, sizeof(newNode->judul), file) == NULL || 
-            fgets(newNode->artis, sizeof(newNode->artis), file) == NULL) {
-            printf("\nError: Failed to read song title or artist. Stopping load process.\n");
-            free(newNode);
-            break;
-        }
+        
+        fscanf(file, "%d\n", &newNode->id);
+        fgets(newNode->judul, sizeof(newNode->judul), file);
         newNode->judul[strcspn(newNode->judul, "\n")] = 0;
+        fgets(newNode->artis, sizeof(newNode->artis), file);
         newNode->artis[strcspn(newNode->artis, "\n")] = 0;
-
-        // Validasi pembacaan durasi dan tahun rilis
-        if (fscanf(file, "%d\n", &newNode->durasi) != 1 || 
-            fscanf(file, "%d\n", &newNode->tahunRilis) != 1) {
-            printf("\nError: Failed to read duration or release year. Stopping load process.\n");
-            free(newNode);
-            break;
-        }
+        fscanf(file, "%d\n", &newNode->durasi);
+        fscanf(file, "%d\n", &newNode->tahunRilis);
         newNode->next = NULL;
-        // Cek duplikasi sebelum menambahkan ke queue
+        
         if (!duplikasi(myQueue, newNode->id)) {
-            enqueue(newNode, myQueue); // Tambahkan node ke queue
+            enqueue(newNode, myQueue);
         } else {
-            printf("Warning: Duplicate ID %d found. Skipping this entry.\n", newNode->id);
-            free(newNode); // Hapus node jika duplikat
+            free(newNode);
         }
     }
 
     fclose(file);
-    printf("\nData queue berhasil dimuat dari file queue_data.txt\n");
 }
-
 
 // Fungsi untuk memeriksa apakah ada lagu dengan ID yang sama di queue
 int duplikasi(queue *myQueue, int id) {
