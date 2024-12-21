@@ -1207,6 +1207,7 @@ void playNextSong(nodeCircular *circularHead)
 {
     char input;
     int start_time;
+
     if (circularHead == NULL)
     {
         printf("\nDaftar putar circular kosong.\n");
@@ -1214,33 +1215,45 @@ void playNextSong(nodeCircular *circularHead)
     }
 
     nodeCircular *pCur = circularHead;
+    nodeCircular *prevCur = NULL;
     do
     {
         system("cls");
+
         if (pCur == circularHead) {
             MusicBox2(pCur);
             printf("\ninputkan 2(next)/0(berhenti):");
-            int start_time = time (NULL);
-                while (!kbhit() && (time(NULL) - start_time < 5000)) {
+            start_time = time(NULL);
+            while (!kbhit() && (time(NULL) - start_time < 5000)) {
             }
         } else {
             printMusicBox1(pCur);
             printf("\ninputkan 1(prev)/2(next)/(0 berhenti):");
-            int start_time = time(NULL);
-                while (!kbhit() && (time(NULL) - start_time < 5000)) {
+            start_time = time(NULL);
+            while (!kbhit() && (time(NULL) - start_time < 5000)) {
             }
         }
+
         if (kbhit()) {
             input = getch();
         } else {
             input = -1;
         }
+
+        // Proses input pengguna
         if (input == '2') {
+            prevCur = pCur;
             pCur = pCur->next;
+        } else if (input == '1') { 
+            if (prevCur != NULL) {
+                pCur = prevCur;
+                prevCur = NULL;
+            }
         } else if (input == '0') {
             printf("Berhenti memutar lagu.\n");
             break;
         } else if (input == -1) {
+            prevCur = pCur;
             pCur = pCur->next;
         }
     } while (pCur != circularHead);
